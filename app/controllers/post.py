@@ -30,7 +30,7 @@ class PostController:
         :type text: str
         """
         post = (PostImpl()).get(user_id=user_id, id=post_id)
-        return ttypes.Post(id=post.post_id, text=post.text)
+        return ttypes.Post(id=post.post_id, text=post.text.encode('utf-8'))
 
     def list(self, user_id):
         """
@@ -42,7 +42,7 @@ class PostController:
         ret = []
         for post in (PostImpl()).list():
             t_user = ttypes.User(id=1, username='foo')
-            t_post = ttypes.Post(id=post.post_id, text=post.text, user=t_user)
+            t_post = ttypes.Post(id=post.post_id, text=post.text.encode('utf-8'), user=t_user)
             ret = ret + [t_post]
 
         return ret
