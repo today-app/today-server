@@ -1,0 +1,48 @@
+# SETTINGS
+# ========
+#
+# sqlalchemy
+# engine = create_engine('mysql://user:secret@dogowon.cafe24.com/sqlalchemy_test?charset=utf8', echo=True)
+sqlalchemy: {
+    uri: 'mysql://user:secret@dogowon.cafe24.com/sqlalchemy_test?charset=utf8',
+    kwargs: {
+        echo: False
+    }
+}
+
+# mongoengine
+# connect('dogtooth', host='ds045998.mongolab.com', port=45998, username='yoophi', password='secret')
+mongoengine: {
+    database: 'dogtooth',
+    kwargs: {
+        host: 'ds045998.mongolab.com'
+        port: 45998,
+        username: 'yoophi',
+        password: 'secret'
+    }
+}
+
+# service
+twisted: {
+    interface: '127.0.0.1',
+    port: 9091,
+    logging: {
+        target: 'stdout', # 'stdout' or 'file'
+        filename: 'test.log',
+        log_level: 2
+    }
+
+}
+
+# redis
+redis: {
+    host: '127.0.0.1',
+    port: 6379,
+    db: 0
+}
+
+# celery
+celery: {
+    broker: 'redis://dogowon.cafe24.com/0',
+    result_backend: 'redis://dogowon.cafe24.com/0'
+}
