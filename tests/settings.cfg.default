@@ -1,0 +1,39 @@
+# SETTINGS
+# ========
+#
+# sqlalchemy
+sqlalchemy: {
+    uri: 'mysql://user:secret@localhost/today_test?charset=utf8',
+
+    kwargs: {
+        echo: False
+    }
+}
+
+# mongoengine
+mongoengine: {
+    database: 'today_test',
+    kwargs: {
+        host: 'localhost'
+        port: 27017,
+    }
+}
+
+# service
+twisted: {
+    interface: '127.0.0.1',
+    port: 9091,
+    logging: {
+        target: 'stdout', # 'stdout' or 'file'
+        filename: 'test.log',
+        log_level: 2
+    }
+
+}
+
+# redis
+redis: {
+    host: '127.0.0.1',
+    port: 6379,
+    db: 1
+}
