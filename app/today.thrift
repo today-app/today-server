@@ -34,5 +34,7 @@ service TodayInternalApiService
 
     list <Comment> post_comment_list(1: int user_id, 2: int post_id),
 
-    bool post_comment_delete(1: int user_id, 2: int post_id, 3: int comment_id)
+    bool post_comment_delete(1: int user_id, 2: int post_id, 3: int comment_id),
+
+    bool system_reset_fixtures()
 }
