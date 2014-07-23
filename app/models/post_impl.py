@@ -12,4 +12,11 @@ class PostImpl(ModelImpl):
 
         return p.post_id
 
+    def get(self, user_id, id):
+        post = db.Post.objects(post_id=id).first()
+
+        return post
+
+    def list(self):
+        return db.Post.objects.all()
 

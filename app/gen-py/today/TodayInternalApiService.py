@@ -3,7 +3,7 @@
 #
 # DO NOT EDIT UNLESS YOU ARE SURE THAT YOU KNOW WHAT YOU ARE DOING
 #
-#  options string: py:twisted
+#  options string: py
 #
 
 from thrift.Thrift import TType, TMessageType, TException, TApplicationException
@@ -16,111 +16,15 @@ try:
 except:
   fastbinary = None
 
-from zope.interface import Interface, implements
-from twisted.internet import defer
-from thrift.transport import TTwisted
 
-class Iface(Interface):
-  def post_create(user_id, text):
-    """
-    Parameters:
-     - user_id
-     - text
-    """
-    pass
-
-  def post_get(user_id, post_id):
-    """
-    Parameters:
-     - user_id
-     - post_id
-    """
-    pass
-
-  def post_list(user_id):
-    """
-    Parameters:
-     - user_id
-    """
-    pass
-
-  def post_delete(user_id, post_id):
-    """
-    Parameters:
-     - user_id
-     - post_id
-    """
-    pass
-
-  def post_comment_create(user_id, post_id):
-    """
-    Parameters:
-     - user_id
-     - post_id
-    """
-    pass
-
-  def post_comment_list(user_id, post_id):
-    """
-    Parameters:
-     - user_id
-     - post_id
-    """
-    pass
-
-  def post_comment_delete(user_id, post_id, comment_id):
-    """
-    Parameters:
-     - user_id
-     - post_id
-     - comment_id
-    """
-    pass
-
-
-class Client:
-  implements(Iface)
-
-  def __init__(self, transport, oprot_factory):
-    self._transport = transport
-    self._oprot_factory = oprot_factory
-    self._seqid = 0
-    self._reqs = {}
-
+class Iface:
   def post_create(self, user_id, text):
     """
     Parameters:
      - user_id
      - text
     """
-    self._seqid += 1
-    d = self._reqs[self._seqid] = defer.Deferred()
-    self.send_post_create(user_id, text)
-    return d
-
-  def send_post_create(self, user_id, text):
-    oprot = self._oprot_factory.getProtocol(self._transport)
-    oprot.writeMessageBegin('post_create', TMessageType.CALL, self._seqid)
-    args = post_create_args()
-    args.user_id = user_id
-    args.text = text
-    args.write(oprot)
-    oprot.writeMessageEnd()
-    oprot.trans.flush()
-
-  def recv_post_create(self, iprot, mtype, rseqid):
-    d = self._reqs.pop(rseqid)
-    if mtype == TMessageType.EXCEPTION:
-      x = TApplicationException()
-      x.read(iprot)
-      iprot.readMessageEnd()
-      return d.errback(x)
-    result = post_create_result()
-    result.read(iprot)
-    iprot.readMessageEnd()
-    if result.success is not None:
-      return d.callback(result.success)
-    return d.errback(TApplicationException(TApplicationException.MISSING_RESULT, "post_create failed: unknown result"))
+    pass
 
   def post_get(self, user_id, post_id):
     """
@@ -128,67 +32,14 @@ class Client:
      - user_id
      - post_id
     """
-    self._seqid += 1
-    d = self._reqs[self._seqid] = defer.Deferred()
-    self.send_post_get(user_id, post_id)
-    return d
-
-  def send_post_get(self, user_id, post_id):
-    oprot = self._oprot_factory.getProtocol(self._transport)
-    oprot.writeMessageBegin('post_get', TMessageType.CALL, self._seqid)
-    args = post_get_args()
-    args.user_id = user_id
-    args.post_id = post_id
-    args.write(oprot)
-    oprot.writeMessageEnd()
-    oprot.trans.flush()
-
-  def recv_post_get(self, iprot, mtype, rseqid):
-    d = self._reqs.pop(rseqid)
-    if mtype == TMessageType.EXCEPTION:
-      x = TApplicationException()
-      x.read(iprot)
-      iprot.readMessageEnd()
-      return d.errback(x)
-    result = post_get_result()
-    result.read(iprot)
-    iprot.readMessageEnd()
-    if result.success is not None:
-      return d.callback(result.success)
-    return d.errback(TApplicationException(TApplicationException.MISSING_RESULT, "post_get failed: unknown result"))
+    pass
 
   def post_list(self, user_id):
     """
     Parameters:
      - user_id
     """
-    self._seqid += 1
-    d = self._reqs[self._seqid] = defer.Deferred()
-    self.send_post_list(user_id)
-    return d
-
-  def send_post_list(self, user_id):
-    oprot = self._oprot_factory.getProtocol(self._transport)
-    oprot.writeMessageBegin('post_list', TMessageType.CALL, self._seqid)
-    args = post_list_args()
-    args.user_id = user_id
-    args.write(oprot)
-    oprot.writeMessageEnd()
-    oprot.trans.flush()
-
-  def recv_post_list(self, iprot, mtype, rseqid):
-    d = self._reqs.pop(rseqid)
-    if mtype == TMessageType.EXCEPTION:
-      x = TApplicationException()
-      x.read(iprot)
-      iprot.readMessageEnd()
-      return d.errback(x)
-    result = post_list_result()
-    result.read(iprot)
-    iprot.readMessageEnd()
-    if result.success is not None:
-      return d.callback(result.success)
-    return d.errback(TApplicationException(TApplicationException.MISSING_RESULT, "post_list failed: unknown result"))
+    pass
 
   def post_delete(self, user_id, post_id):
     """
@@ -196,34 +47,7 @@ class Client:
      - user_id
      - post_id
     """
-    self._seqid += 1
-    d = self._reqs[self._seqid] = defer.Deferred()
-    self.send_post_delete(user_id, post_id)
-    return d
-
-  def send_post_delete(self, user_id, post_id):
-    oprot = self._oprot_factory.getProtocol(self._transport)
-    oprot.writeMessageBegin('post_delete', TMessageType.CALL, self._seqid)
-    args = post_delete_args()
-    args.user_id = user_id
-    args.post_id = post_id
-    args.write(oprot)
-    oprot.writeMessageEnd()
-    oprot.trans.flush()
-
-  def recv_post_delete(self, iprot, mtype, rseqid):
-    d = self._reqs.pop(rseqid)
-    if mtype == TMessageType.EXCEPTION:
-      x = TApplicationException()
-      x.read(iprot)
-      iprot.readMessageEnd()
-      return d.errback(x)
-    result = post_delete_result()
-    result.read(iprot)
-    iprot.readMessageEnd()
-    if result.success is not None:
-      return d.callback(result.success)
-    return d.errback(TApplicationException(TApplicationException.MISSING_RESULT, "post_delete failed: unknown result"))
+    pass
 
   def post_comment_create(self, user_id, post_id):
     """
@@ -231,34 +55,7 @@ class Client:
      - user_id
      - post_id
     """
-    self._seqid += 1
-    d = self._reqs[self._seqid] = defer.Deferred()
-    self.send_post_comment_create(user_id, post_id)
-    return d
-
-  def send_post_comment_create(self, user_id, post_id):
-    oprot = self._oprot_factory.getProtocol(self._transport)
-    oprot.writeMessageBegin('post_comment_create', TMessageType.CALL, self._seqid)
-    args = post_comment_create_args()
-    args.user_id = user_id
-    args.post_id = post_id
-    args.write(oprot)
-    oprot.writeMessageEnd()
-    oprot.trans.flush()
-
-  def recv_post_comment_create(self, iprot, mtype, rseqid):
-    d = self._reqs.pop(rseqid)
-    if mtype == TMessageType.EXCEPTION:
-      x = TApplicationException()
-      x.read(iprot)
-      iprot.readMessageEnd()
-      return d.errback(x)
-    result = post_comment_create_result()
-    result.read(iprot)
-    iprot.readMessageEnd()
-    if result.success is not None:
-      return d.callback(result.success)
-    return d.errback(TApplicationException(TApplicationException.MISSING_RESULT, "post_comment_create failed: unknown result"))
+    pass
 
   def post_comment_list(self, user_id, post_id):
     """
@@ -266,34 +63,7 @@ class Client:
      - user_id
      - post_id
     """
-    self._seqid += 1
-    d = self._reqs[self._seqid] = defer.Deferred()
-    self.send_post_comment_list(user_id, post_id)
-    return d
-
-  def send_post_comment_list(self, user_id, post_id):
-    oprot = self._oprot_factory.getProtocol(self._transport)
-    oprot.writeMessageBegin('post_comment_list', TMessageType.CALL, self._seqid)
-    args = post_comment_list_args()
-    args.user_id = user_id
-    args.post_id = post_id
-    args.write(oprot)
-    oprot.writeMessageEnd()
-    oprot.trans.flush()
-
-  def recv_post_comment_list(self, iprot, mtype, rseqid):
-    d = self._reqs.pop(rseqid)
-    if mtype == TMessageType.EXCEPTION:
-      x = TApplicationException()
-      x.read(iprot)
-      iprot.readMessageEnd()
-      return d.errback(x)
-    result = post_comment_list_result()
-    result.read(iprot)
-    iprot.readMessageEnd()
-    if result.success is not None:
-      return d.callback(result.success)
-    return d.errback(TApplicationException(TApplicationException.MISSING_RESULT, "post_comment_list failed: unknown result"))
+    pass
 
   def post_comment_delete(self, user_id, post_id, comment_id):
     """
@@ -302,42 +72,244 @@ class Client:
      - post_id
      - comment_id
     """
-    self._seqid += 1
-    d = self._reqs[self._seqid] = defer.Deferred()
+    pass
+
+
+class Client(Iface):
+  def __init__(self, iprot, oprot=None):
+    self._iprot = self._oprot = iprot
+    if oprot is not None:
+      self._oprot = oprot
+    self._seqid = 0
+
+  def post_create(self, user_id, text):
+    """
+    Parameters:
+     - user_id
+     - text
+    """
+    self.send_post_create(user_id, text)
+    return self.recv_post_create()
+
+  def send_post_create(self, user_id, text):
+    self._oprot.writeMessageBegin('post_create', TMessageType.CALL, self._seqid)
+    args = post_create_args()
+    args.user_id = user_id
+    args.text = text
+    args.write(self._oprot)
+    self._oprot.writeMessageEnd()
+    self._oprot.trans.flush()
+
+  def recv_post_create(self):
+    (fname, mtype, rseqid) = self._iprot.readMessageBegin()
+    if mtype == TMessageType.EXCEPTION:
+      x = TApplicationException()
+      x.read(self._iprot)
+      self._iprot.readMessageEnd()
+      raise x
+    result = post_create_result()
+    result.read(self._iprot)
+    self._iprot.readMessageEnd()
+    if result.success is not None:
+      return result.success
+    raise TApplicationException(TApplicationException.MISSING_RESULT, "post_create failed: unknown result");
+
+  def post_get(self, user_id, post_id):
+    """
+    Parameters:
+     - user_id
+     - post_id
+    """
+    self.send_post_get(user_id, post_id)
+    return self.recv_post_get()
+
+  def send_post_get(self, user_id, post_id):
+    self._oprot.writeMessageBegin('post_get', TMessageType.CALL, self._seqid)
+    args = post_get_args()
+    args.user_id = user_id
+    args.post_id = post_id
+    args.write(self._oprot)
+    self._oprot.writeMessageEnd()
+    self._oprot.trans.flush()
+
+  def recv_post_get(self):
+    (fname, mtype, rseqid) = self._iprot.readMessageBegin()
+    if mtype == TMessageType.EXCEPTION:
+      x = TApplicationException()
+      x.read(self._iprot)
+      self._iprot.readMessageEnd()
+      raise x
+    result = post_get_result()
+    result.read(self._iprot)
+    self._iprot.readMessageEnd()
+    if result.success is not None:
+      return result.success
+    raise TApplicationException(TApplicationException.MISSING_RESULT, "post_get failed: unknown result");
+
+  def post_list(self, user_id):
+    """
+    Parameters:
+     - user_id
+    """
+    self.send_post_list(user_id)
+    return self.recv_post_list()
+
+  def send_post_list(self, user_id):
+    self._oprot.writeMessageBegin('post_list', TMessageType.CALL, self._seqid)
+    args = post_list_args()
+    args.user_id = user_id
+    args.write(self._oprot)
+    self._oprot.writeMessageEnd()
+    self._oprot.trans.flush()
+
+  def recv_post_list(self):
+    (fname, mtype, rseqid) = self._iprot.readMessageBegin()
+    if mtype == TMessageType.EXCEPTION:
+      x = TApplicationException()
+      x.read(self._iprot)
+      self._iprot.readMessageEnd()
+      raise x
+    result = post_list_result()
+    result.read(self._iprot)
+    self._iprot.readMessageEnd()
+    if result.success is not None:
+      return result.success
+    raise TApplicationException(TApplicationException.MISSING_RESULT, "post_list failed: unknown result");
+
+  def post_delete(self, user_id, post_id):
+    """
+    Parameters:
+     - user_id
+     - post_id
+    """
+    self.send_post_delete(user_id, post_id)
+    return self.recv_post_delete()
+
+  def send_post_delete(self, user_id, post_id):
+    self._oprot.writeMessageBegin('post_delete', TMessageType.CALL, self._seqid)
+    args = post_delete_args()
+    args.user_id = user_id
+    args.post_id = post_id
+    args.write(self._oprot)
+    self._oprot.writeMessageEnd()
+    self._oprot.trans.flush()
+
+  def recv_post_delete(self):
+    (fname, mtype, rseqid) = self._iprot.readMessageBegin()
+    if mtype == TMessageType.EXCEPTION:
+      x = TApplicationException()
+      x.read(self._iprot)
+      self._iprot.readMessageEnd()
+      raise x
+    result = post_delete_result()
+    result.read(self._iprot)
+    self._iprot.readMessageEnd()
+    if result.success is not None:
+      return result.success
+    raise TApplicationException(TApplicationException.MISSING_RESULT, "post_delete failed: unknown result");
+
+  def post_comment_create(self, user_id, post_id):
+    """
+    Parameters:
+     - user_id
+     - post_id
+    """
+    self.send_post_comment_create(user_id, post_id)
+    return self.recv_post_comment_create()
+
+  def send_post_comment_create(self, user_id, post_id):
+    self._oprot.writeMessageBegin('post_comment_create', TMessageType.CALL, self._seqid)
+    args = post_comment_create_args()
+    args.user_id = user_id
+    args.post_id = post_id
+    args.write(self._oprot)
+    self._oprot.writeMessageEnd()
+    self._oprot.trans.flush()
+
+  def recv_post_comment_create(self):
+    (fname, mtype, rseqid) = self._iprot.readMessageBegin()
+    if mtype == TMessageType.EXCEPTION:
+      x = TApplicationException()
+      x.read(self._iprot)
+      self._iprot.readMessageEnd()
+      raise x
+    result = post_comment_create_result()
+    result.read(self._iprot)
+    self._iprot.readMessageEnd()
+    if result.success is not None:
+      return result.success
+    raise TApplicationException(TApplicationException.MISSING_RESULT, "post_comment_create failed: unknown result");
+
+  def post_comment_list(self, user_id, post_id):
+    """
+    Parameters:
+     - user_id
+     - post_id
+    """
+    self.send_post_comment_list(user_id, post_id)
+    return self.recv_post_comment_list()
+
+  def send_post_comment_list(self, user_id, post_id):
+    self._oprot.writeMessageBegin('post_comment_list', TMessageType.CALL, self._seqid)
+    args = post_comment_list_args()
+    args.user_id = user_id
+    args.post_id = post_id
+    args.write(self._oprot)
+    self._oprot.writeMessageEnd()
+    self._oprot.trans.flush()
+
+  def recv_post_comment_list(self):
+    (fname, mtype, rseqid) = self._iprot.readMessageBegin()
+    if mtype == TMessageType.EXCEPTION:
+      x = TApplicationException()
+      x.read(self._iprot)
+      self._iprot.readMessageEnd()
+      raise x
+    result = post_comment_list_result()
+    result.read(self._iprot)
+    self._iprot.readMessageEnd()
+    if result.success is not None:
+      return result.success
+    raise TApplicationException(TApplicationException.MISSING_RESULT, "post_comment_list failed: unknown result");
+
+  def post_comment_delete(self, user_id, post_id, comment_id):
+    """
+    Parameters:
+     - user_id
+     - post_id
+     - comment_id
+    """
     self.send_post_comment_delete(user_id, post_id, comment_id)
-    return d
+    return self.recv_post_comment_delete()
 
   def send_post_comment_delete(self, user_id, post_id, comment_id):
-    oprot = self._oprot_factory.getProtocol(self._transport)
-    oprot.writeMessageBegin('post_comment_delete', TMessageType.CALL, self._seqid)
+    self._oprot.writeMessageBegin('post_comment_delete', TMessageType.CALL, self._seqid)
     args = post_comment_delete_args()
     args.user_id = user_id
     args.post_id = post_id
     args.comment_id = comment_id
-    args.write(oprot)
-    oprot.writeMessageEnd()
-    oprot.trans.flush()
+    args.write(self._oprot)
+    self._oprot.writeMessageEnd()
+    self._oprot.trans.flush()
 
-  def recv_post_comment_delete(self, iprot, mtype, rseqid):
-    d = self._reqs.pop(rseqid)
+  def recv_post_comment_delete(self):
+    (fname, mtype, rseqid) = self._iprot.readMessageBegin()
     if mtype == TMessageType.EXCEPTION:
       x = TApplicationException()
-      x.read(iprot)
-      iprot.readMessageEnd()
-      return d.errback(x)
+      x.read(self._iprot)
+      self._iprot.readMessageEnd()
+      raise x
     result = post_comment_delete_result()
-    result.read(iprot)
-    iprot.readMessageEnd()
+    result.read(self._iprot)
+    self._iprot.readMessageEnd()
     if result.success is not None:
-      return d.callback(result.success)
-    return d.errback(TApplicationException(TApplicationException.MISSING_RESULT, "post_comment_delete failed: unknown result"))
+      return result.success
+    raise TApplicationException(TApplicationException.MISSING_RESULT, "post_comment_delete failed: unknown result");
 
 
-class Processor(TProcessor):
-  implements(Iface)
-
+class Processor(Iface, TProcessor):
   def __init__(self, handler):
-    self._handler = Iface(handler)
+    self._handler = handler
     self._processMap = {}
     self._processMap["post_create"] = Processor.process_post_create
     self._processMap["post_get"] = Processor.process_post_get
@@ -357,21 +329,17 @@ class Processor(TProcessor):
       x.write(oprot)
       oprot.writeMessageEnd()
       oprot.trans.flush()
-      return defer.succeed(None)
+      return
     else:
-      return self._processMap[name](self, seqid, iprot, oprot)
+      self._processMap[name](self, seqid, iprot, oprot)
+    return True
 
   def process_post_create(self, seqid, iprot, oprot):
     args = post_create_args()
     args.read(iprot)
     iprot.readMessageEnd()
     result = post_create_result()
-    d = defer.maybeDeferred(self._handler.post_create, args.user_id, args.text)
-    d.addCallback(self.write_results_success_post_create, result, seqid, oprot)
-    return d
-
-  def write_results_success_post_create(self, success, result, seqid, oprot):
-    result.success = success
+    result.success = self._handler.post_create(args.user_id, args.text)
     oprot.writeMessageBegin("post_create", TMessageType.REPLY, seqid)
     result.write(oprot)
     oprot.writeMessageEnd()
@@ -382,12 +350,7 @@ class Processor(TProcessor):
     args.read(iprot)
     iprot.readMessageEnd()
     result = post_get_result()
-    d = defer.maybeDeferred(self._handler.post_get, args.user_id, args.post_id)
-    d.addCallback(self.write_results_success_post_get, result, seqid, oprot)
-    return d
-
-  def write_results_success_post_get(self, success, result, seqid, oprot):
-    result.success = success
+    result.success = self._handler.post_get(args.user_id, args.post_id)
     oprot.writeMessageBegin("post_get", TMessageType.REPLY, seqid)
     result.write(oprot)
     oprot.writeMessageEnd()
@@ -398,12 +361,7 @@ class Processor(TProcessor):
     args.read(iprot)
     iprot.readMessageEnd()
     result = post_list_result()
-    d = defer.maybeDeferred(self._handler.post_list, args.user_id)
-    d.addCallback(self.write_results_success_post_list, result, seqid, oprot)
-    return d
-
-  def write_results_success_post_list(self, success, result, seqid, oprot):
-    result.success = success
+    result.success = self._handler.post_list(args.user_id)
     oprot.writeMessageBegin("post_list", TMessageType.REPLY, seqid)
     result.write(oprot)
     oprot.writeMessageEnd()
@@ -414,12 +372,7 @@ class Processor(TProcessor):
     args.read(iprot)
     iprot.readMessageEnd()
     result = post_delete_result()
-    d = defer.maybeDeferred(self._handler.post_delete, args.user_id, args.post_id)
-    d.addCallback(self.write_results_success_post_delete, result, seqid, oprot)
-    return d
-
-  def write_results_success_post_delete(self, success, result, seqid, oprot):
-    result.success = success
+    result.success = self._handler.post_delete(args.user_id, args.post_id)
     oprot.writeMessageBegin("post_delete", TMessageType.REPLY, seqid)
     result.write(oprot)
     oprot.writeMessageEnd()
@@ -430,12 +383,7 @@ class Processor(TProcessor):
     args.read(iprot)
     iprot.readMessageEnd()
     result = post_comment_create_result()
-    d = defer.maybeDeferred(self._handler.post_comment_create, args.user_id, args.post_id)
-    d.addCallback(self.write_results_success_post_comment_create, result, seqid, oprot)
-    return d
-
-  def write_results_success_post_comment_create(self, success, result, seqid, oprot):
-    result.success = success
+    result.success = self._handler.post_comment_create(args.user_id, args.post_id)
     oprot.writeMessageBegin("post_comment_create", TMessageType.REPLY, seqid)
     result.write(oprot)
     oprot.writeMessageEnd()
@@ -446,12 +394,7 @@ class Processor(TProcessor):
     args.read(iprot)
     iprot.readMessageEnd()
     result = post_comment_list_result()
-    d = defer.maybeDeferred(self._handler.post_comment_list, args.user_id, args.post_id)
-    d.addCallback(self.write_results_success_post_comment_list, result, seqid, oprot)
-    return d
-
-  def write_results_success_post_comment_list(self, success, result, seqid, oprot):
-    result.success = success
+    result.success = self._handler.post_comment_list(args.user_id, args.post_id)
     oprot.writeMessageBegin("post_comment_list", TMessageType.REPLY, seqid)
     result.write(oprot)
     oprot.writeMessageEnd()
@@ -462,12 +405,7 @@ class Processor(TProcessor):
     args.read(iprot)
     iprot.readMessageEnd()
     result = post_comment_delete_result()
-    d = defer.maybeDeferred(self._handler.post_comment_delete, args.user_id, args.post_id, args.comment_id)
-    d.addCallback(self.write_results_success_post_comment_delete, result, seqid, oprot)
-    return d
-
-  def write_results_success_post_comment_delete(self, success, result, seqid, oprot):
-    result.success = success
+    result.success = self._handler.post_comment_delete(args.user_id, args.post_id, args.comment_id)
     oprot.writeMessageBegin("post_comment_delete", TMessageType.REPLY, seqid)
     result.write(oprot)
     oprot.writeMessageEnd()
