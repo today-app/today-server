@@ -30,7 +30,7 @@ service TodayInternalApiService
 
     bool post_delete(1: int user_id, 2: int post_id),
 
-    int post_comment_create(1: int user_id, 2: int post_id),
+    bool post_comment_create(1: int user_id, 2: int post_id, 3: string text),
 
     list <Comment> post_comment_list(1: int user_id, 2: int post_id),
 

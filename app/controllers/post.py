@@ -47,3 +47,5 @@ class PostController:
 
         return ret
 
+    def comment_create(self, user_id, post_id, text):
+        return (PostImpl()).comment_create(user_id, post_id, text)

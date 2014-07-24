@@ -52,11 +52,12 @@ class Iface(Interface):
     """
     pass
 
-  def post_comment_create(user_id, post_id):
+  def post_comment_create(user_id, post_id, text):
     """
     Parameters:
      - user_id
      - post_id
+     - text
     """
     pass
 
@@ -228,23 +229,25 @@ class Client:
       return d.callback(result.success)
     return d.errback(TApplicationException(TApplicationException.MISSING_RESULT, "post_delete failed: unknown result"))
 
-  def post_comment_create(self, user_id, post_id):
+  def post_comment_create(self, user_id, post_id, text):
     """
     Parameters:
      - user_id
      - post_id
+     - text
     """
     self._seqid += 1
     d = self._reqs[self._seqid] = defer.Deferred()
-    self.send_post_comment_create(user_id, post_id)
+    self.send_post_comment_create(user_id, post_id, text)
     return d
 
-  def send_post_comment_create(self, user_id, post_id):
+  def send_post_comment_create(self, user_id, post_id, text):
     oprot = self._oprot_factory.getProtocol(self._transport)
     oprot.writeMessageBegin('post_comment_create', TMessageType.CALL, self._seqid)
     args = post_comment_create_args()
     args.user_id = user_id
     args.post_id = post_id
+    args.text = text
     args.write(oprot)
     oprot.writeMessageEnd()
     oprot.trans.flush()
@@ -462,7 +465,7 @@ class Processor(TProcessor):
     args.read(iprot)
     iprot.readMessageEnd()
     result = post_comment_create_result()
-    d = defer.maybeDeferred(self._handler.post_comment_create, args.user_id, args.post_id)
+    d = defer.maybeDeferred(self._handler.post_comment_create, args.user_id, args.post_id, args.text)
     d.addCallback(self.write_results_success_post_comment_create, result, seqid, oprot)
     return d
 
@@ -1051,17 +1054,20 @@ class post_comment_create_args:
   Attributes:
    - user_id
    - post_id
+   - text
   """
 
   thrift_spec = (
     None, # 0
     (1, TType.I32, 'user_id', None, None, ), # 1
     (2, TType.I32, 'post_id', None, None, ), # 2
+    (3, TType.STRING, 'text', None, None, ), # 3
   )
 
-  def __init__(self, user_id=None, post_id=None,):
+  def __init__(self, user_id=None, post_id=None, text=None,):
     self.user_id = user_id
     self.post_id = post_id
+    self.text = text
 
   def read(self, iprot):
     if iprot.__class__ == TBinaryProtocol.TBinaryProtocolAccelerated and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None and fastbinary is not None:
@@ -1082,6 +1088,11 @@ class post_comment_create_args:
           self.post_id = iprot.readI32();
         else:
           iprot.skip(ftype)
+      elif fid == 3:
+        if ftype == TType.STRING:
+          self.text = iprot.readString();
+        else:
+          iprot.skip(ftype)
       else:
         iprot.skip(ftype)
       iprot.readFieldEnd()
@@ -1099,6 +1110,10 @@ class post_comment_create_args:
     if self.post_id is not None:
       oprot.writeFieldBegin('post_id', TType.I32, 2)
       oprot.writeI32(self.post_id)
+      oprot.writeFieldEnd()
+    if self.text is not None:
+      oprot.writeFieldBegin('text', TType.STRING, 3)
+      oprot.writeString(self.text)
       oprot.writeFieldEnd()
     oprot.writeFieldStop()
     oprot.writeStructEnd()
@@ -1125,7 +1140,7 @@ class post_comment_create_result:
   """
 
   thrift_spec = (
-    (0, TType.I32, 'success', None, None, ), # 0
+    (0, TType.BOOL, 'success', None, None, ), # 0
   )
 
   def __init__(self, success=None,):
@@ -1141,8 +1156,8 @@ class post_comment_create_result:
       if ftype == TType.STOP:
         break
       if fid == 0:
-        if ftype == TType.I32:
-          self.success = iprot.readI32();
+        if ftype == TType.BOOL:
+          self.success = iprot.readBool();
         else:
           iprot.skip(ftype)
       else:
@@ -1156,8 +1171,8 @@ class post_comment_create_result:
       return
     oprot.writeStructBegin('post_comment_create_result')
     if self.success is not None:
-      oprot.writeFieldBegin('success', TType.I32, 0)
-      oprot.writeI32(self.success)
+      oprot.writeFieldBegin('success', TType.BOOL, 0)
+      oprot.writeBool(self.success)
       oprot.writeFieldEnd()
     oprot.writeFieldStop()
     oprot.writeStructEnd()
