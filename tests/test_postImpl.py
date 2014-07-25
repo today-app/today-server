@@ -51,3 +51,11 @@ class TestPostImpl(TestCase):
 
 
 
+    def test_comment_create(self):
+        pi = PostImpl()
+        post_id = pi.create(1, 'hello')
+        post = pi.get(1, post_id)
+        self.assertEqual(post.post_id, post_id)
+
+        ret = pi.comment_create(1, post_id, 'text')
+        self.assertTrue(ret)
