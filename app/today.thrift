@@ -9,15 +9,16 @@ struct User {
     2: string username
 }
 
+struct Comment {
+    1: int id
+    2: string text
+}
+
 struct Post {
     1: int id
     2: string text
     3: User user
-}
-
-struct Comment {
-    1: int id
-    2: string text
+    4: list <Comment> comments
 }
 
 service TodayInternalApiService

@@ -41,8 +41,13 @@ class PostController:
 
         ret = []
         for post in (PostImpl()).list():
+            comments = []
+            for cmt in post.comments:
+                t_comment = ttypes.Comment(user_id=cmt.user_id, text=cmt.text.encode('utf-8'))
+                comments = comments + [t_comment]
+
             t_user = ttypes.User(id=1, username='foo')
-            t_post = ttypes.Post(id=post.post_id, text=post.text.encode('utf-8'), user=t_user)
+            t_post = ttypes.Post(id=post.post_id, text=post.text.encode('utf-8'), user=t_user, comments=comments)
             ret = ret + [t_post]
 
         return ret

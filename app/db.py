@@ -32,6 +32,13 @@ class Connection(object):
             self.is_connected = True
 
 
+class Comment(EmbeddedDocument):
+    id = StringField()
+    user_id = IntField()
+    text = StringField()
+    created_dt = DateTimeField()
+
+
 class Post(Document):
     post_id = IntField(required=True)
     user_id = IntField(required=True)
@@ -39,10 +46,4 @@ class Post(Document):
 
     comments = ListField(EmbeddedDocumentField(Comment))
 
-
-class Comment(EmbeddedDocument):
-    id = StringField()
-    user_id = IntField()
-    content = StringField()
-    created_dt = DateTimeField()
 
