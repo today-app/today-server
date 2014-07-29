@@ -167,7 +167,6 @@ class Post:
    - id
    - text
    - user
-   - comments
   """
 
   thrift_spec = (
@@ -175,14 +174,12 @@ class Post:
     (1, TType.I32, 'id', None, None, ), # 1
     (2, TType.STRING, 'text', None, None, ), # 2
     (3, TType.STRUCT, 'user', (User, User.thrift_spec), None, ), # 3
-    (4, TType.LIST, 'comments', (TType.STRUCT,(Comment, Comment.thrift_spec)), None, ), # 4
   )
 
-  def __init__(self, id=None, text=None, user=None, comments=None,):
+  def __init__(self, id=None, text=None, user=None,):
     self.id = id
     self.text = text
     self.user = user
-    self.comments = comments
 
   def read(self, iprot):
     if iprot.__class__ == TBinaryProtocol.TBinaryProtocolAccelerated and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None and fastbinary is not None:
@@ -209,17 +206,6 @@ class Post:
           self.user.read(iprot)
         else:
           iprot.skip(ftype)
-      elif fid == 4:
-        if ftype == TType.LIST:
-          self.comments = []
-          (_etype3, _size0) = iprot.readListBegin()
-          for _i4 in xrange(_size0):
-            _elem5 = Comment()
-            _elem5.read(iprot)
-            self.comments.append(_elem5)
-          iprot.readListEnd()
-        else:
-          iprot.skip(ftype)
       else:
         iprot.skip(ftype)
       iprot.readFieldEnd()
@@ -241,13 +227,6 @@ class Post:
     if self.user is not None:
       oprot.writeFieldBegin('user', TType.STRUCT, 3)
       self.user.write(oprot)
-      oprot.writeFieldEnd()
-    if self.comments is not None:
-      oprot.writeFieldBegin('comments', TType.LIST, 4)
-      oprot.writeListBegin(TType.STRUCT, len(self.comments))
-      for iter6 in self.comments:
-        iter6.write(oprot)
-      oprot.writeListEnd()
       oprot.writeFieldEnd()
     oprot.writeFieldStop()
     oprot.writeStructEnd()

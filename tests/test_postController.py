@@ -53,3 +53,5 @@ class TestPostController(TestCase):
         self.assertEqual(post_id, post.id)
         # self.assertTrue(pc.get())
 
+
+

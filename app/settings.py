@@ -16,3 +16,5 @@ class Setting(object):
 
     def initialize(self, path):
         self.config = Config(file(path))
+
+

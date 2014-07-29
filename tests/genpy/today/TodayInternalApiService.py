@@ -49,11 +49,12 @@ class Iface:
     """
     pass
 
-  def post_comment_create(self, user_id, post_id):
+  def post_comment_create(self, user_id, post_id, text):
     """
     Parameters:
      - user_id
      - post_id
+     - text
     """
     pass
 
@@ -72,6 +73,9 @@ class Iface:
      - post_id
      - comment_id
     """
+    pass
+
+  def system_reset_fixtures(self):
     pass
 
 
@@ -208,20 +212,22 @@ class Client(Iface):
       return result.success
     raise TApplicationException(TApplicationException.MISSING_RESULT, "post_delete failed: unknown result");
 
-  def post_comment_create(self, user_id, post_id):
+  def post_comment_create(self, user_id, post_id, text):
     """
     Parameters:
      - user_id
      - post_id
+     - text
     """
-    self.send_post_comment_create(user_id, post_id)
+    self.send_post_comment_create(user_id, post_id, text)
     return self.recv_post_comment_create()
 
-  def send_post_comment_create(self, user_id, post_id):
+  def send_post_comment_create(self, user_id, post_id, text):
     self._oprot.writeMessageBegin('post_comment_create', TMessageType.CALL, self._seqid)
     args = post_comment_create_args()
     args.user_id = user_id
     args.post_id = post_id
+    args.text = text
     args.write(self._oprot)
     self._oprot.writeMessageEnd()
     self._oprot.trans.flush()
@@ -306,6 +312,31 @@ class Client(Iface):
       return result.success
     raise TApplicationException(TApplicationException.MISSING_RESULT, "post_comment_delete failed: unknown result");
 
+  def system_reset_fixtures(self):
+    self.send_system_reset_fixtures()
+    return self.recv_system_reset_fixtures()
+
+  def send_system_reset_fixtures(self):
+    self._oprot.writeMessageBegin('system_reset_fixtures', TMessageType.CALL, self._seqid)
+    args = system_reset_fixtures_args()
+    args.write(self._oprot)
+    self._oprot.writeMessageEnd()
+    self._oprot.trans.flush()
+
+  def recv_system_reset_fixtures(self):
+    (fname, mtype, rseqid) = self._iprot.readMessageBegin()
+    if mtype == TMessageType.EXCEPTION:
+      x = TApplicationException()
+      x.read(self._iprot)
+      self._iprot.readMessageEnd()
+      raise x
+    result = system_reset_fixtures_result()
+    result.read(self._iprot)
+    self._iprot.readMessageEnd()
+    if result.success is not None:
+      return result.success
+    raise TApplicationException(TApplicationException.MISSING_RESULT, "system_reset_fixtures failed: unknown result");
+
 
 class Processor(Iface, TProcessor):
   def __init__(self, handler):
@@ -318,6 +349,7 @@ class Processor(Iface, TProcessor):
     self._processMap["post_comment_create"] = Processor.process_post_comment_create
     self._processMap["post_comment_list"] = Processor.process_post_comment_list
     self._processMap["post_comment_delete"] = Processor.process_post_comment_delete
+    self._processMap["system_reset_fixtures"] = Processor.process_system_reset_fixtures
 
   def process(self, iprot, oprot):
     (name, type, seqid) = iprot.readMessageBegin()
@@ -383,7 +415,7 @@ class Processor(Iface, TProcessor):
     args.read(iprot)
     iprot.readMessageEnd()
     result = post_comment_create_result()
-    result.success = self._handler.post_comment_create(args.user_id, args.post_id)
+    result.success = self._handler.post_comment_create(args.user_id, args.post_id, args.text)
     oprot.writeMessageBegin("post_comment_create", TMessageType.REPLY, seqid)
     result.write(oprot)
     oprot.writeMessageEnd()
@@ -407,6 +439,17 @@ class Processor(Iface, TProcessor):
     result = post_comment_delete_result()
     result.success = self._handler.post_comment_delete(args.user_id, args.post_id, args.comment_id)
     oprot.writeMessageBegin("post_comment_delete", TMessageType.REPLY, seqid)
+    result.write(oprot)
+    oprot.writeMessageEnd()
+    oprot.trans.flush()
+
+  def process_system_reset_fixtures(self, seqid, iprot, oprot):
+    args = system_reset_fixtures_args()
+    args.read(iprot)
+    iprot.readMessageEnd()
+    result = system_reset_fixtures_result()
+    result.success = self._handler.system_reset_fixtures()
+    oprot.writeMessageBegin("system_reset_fixtures", TMessageType.REPLY, seqid)
     result.write(oprot)
     oprot.writeMessageEnd()
     oprot.trans.flush()
@@ -941,17 +984,20 @@ class post_comment_create_args:
   Attributes:
    - user_id
    - post_id
+   - text
   """
 
   thrift_spec = (
     None, # 0
     (1, TType.I32, 'user_id', None, None, ), # 1
     (2, TType.I32, 'post_id', None, None, ), # 2
+    (3, TType.STRING, 'text', None, None, ), # 3
   )
 
-  def __init__(self, user_id=None, post_id=None,):
+  def __init__(self, user_id=None, post_id=None, text=None,):
     self.user_id = user_id
     self.post_id = post_id
+    self.text = text
 
   def read(self, iprot):
     if iprot.__class__ == TBinaryProtocol.TBinaryProtocolAccelerated and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None and fastbinary is not None:
@@ -972,6 +1018,11 @@ class post_comment_create_args:
           self.post_id = iprot.readI32();
         else:
           iprot.skip(ftype)
+      elif fid == 3:
+        if ftype == TType.STRING:
+          self.text = iprot.readString();
+        else:
+          iprot.skip(ftype)
       else:
         iprot.skip(ftype)
       iprot.readFieldEnd()
@@ -989,6 +1040,10 @@ class post_comment_create_args:
     if self.post_id is not None:
       oprot.writeFieldBegin('post_id', TType.I32, 2)
       oprot.writeI32(self.post_id)
+      oprot.writeFieldEnd()
+    if self.text is not None:
+      oprot.writeFieldBegin('text', TType.STRING, 3)
+      oprot.writeString(self.text)
       oprot.writeFieldEnd()
     oprot.writeFieldStop()
     oprot.writeStructEnd()
@@ -1015,7 +1070,7 @@ class post_comment_create_result:
   """
 
   thrift_spec = (
-    (0, TType.I32, 'success', None, None, ), # 0
+    (0, TType.BOOL, 'success', None, None, ), # 0
   )
 
   def __init__(self, success=None,):
@@ -1031,8 +1086,8 @@ class post_comment_create_result:
       if ftype == TType.STOP:
         break
       if fid == 0:
-        if ftype == TType.I32:
-          self.success = iprot.readI32();
+        if ftype == TType.BOOL:
+          self.success = iprot.readBool();
         else:
           iprot.skip(ftype)
       else:
@@ -1046,8 +1101,8 @@ class post_comment_create_result:
       return
     oprot.writeStructBegin('post_comment_create_result')
     if self.success is not None:
-      oprot.writeFieldBegin('success', TType.I32, 0)
-      oprot.writeI32(self.success)
+      oprot.writeFieldBegin('success', TType.BOOL, 0)
+      oprot.writeBool(self.success)
       oprot.writeFieldEnd()
     oprot.writeFieldStop()
     oprot.writeStructEnd()
@@ -1328,6 +1383,107 @@ class post_comment_delete_result:
       oprot.trans.write(fastbinary.encode_binary(self, (self.__class__, self.thrift_spec)))
       return
     oprot.writeStructBegin('post_comment_delete_result')
+    if self.success is not None:
+      oprot.writeFieldBegin('success', TType.BOOL, 0)
+      oprot.writeBool(self.success)
+      oprot.writeFieldEnd()
+    oprot.writeFieldStop()
+    oprot.writeStructEnd()
+
+  def validate(self):
+    return
+
+
+  def __repr__(self):
+    L = ['%s=%r' % (key, value)
+      for key, value in self.__dict__.iteritems()]
+    return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
+
+  def __eq__(self, other):
+    return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
+
+  def __ne__(self, other):
+    return not (self == other)
+
+class system_reset_fixtures_args:
+
+  thrift_spec = (
+  )
+
+  def read(self, iprot):
+    if iprot.__class__ == TBinaryProtocol.TBinaryProtocolAccelerated and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None and fastbinary is not None:
+      fastbinary.decode_binary(self, iprot.trans, (self.__class__, self.thrift_spec))
+      return
+    iprot.readStructBegin()
+    while True:
+      (fname, ftype, fid) = iprot.readFieldBegin()
+      if ftype == TType.STOP:
+        break
+      else:
+        iprot.skip(ftype)
+      iprot.readFieldEnd()
+    iprot.readStructEnd()
+
+  def write(self, oprot):
+    if oprot.__class__ == TBinaryProtocol.TBinaryProtocolAccelerated and self.thrift_spec is not None and fastbinary is not None:
+      oprot.trans.write(fastbinary.encode_binary(self, (self.__class__, self.thrift_spec)))
+      return
+    oprot.writeStructBegin('system_reset_fixtures_args')
+    oprot.writeFieldStop()
+    oprot.writeStructEnd()
+
+  def validate(self):
+    return
+
+
+  def __repr__(self):
+    L = ['%s=%r' % (key, value)
+      for key, value in self.__dict__.iteritems()]
+    return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
+
+  def __eq__(self, other):
+    return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
+
+  def __ne__(self, other):
+    return not (self == other)
+
+class system_reset_fixtures_result:
+  """
+  Attributes:
+   - success
+  """
+
+  thrift_spec = (
+    (0, TType.BOOL, 'success', None, None, ), # 0
+  )
+
+  def __init__(self, success=None,):
+    self.success = success
+
+  def read(self, iprot):
+    if iprot.__class__ == TBinaryProtocol.TBinaryProtocolAccelerated and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None and fastbinary is not None:
+      fastbinary.decode_binary(self, iprot.trans, (self.__class__, self.thrift_spec))
+      return
+    iprot.readStructBegin()
+    while True:
+      (fname, ftype, fid) = iprot.readFieldBegin()
+      if ftype == TType.STOP:
+        break
+      if fid == 0:
+        if ftype == TType.BOOL:
+          self.success = iprot.readBool();
+        else:
+          iprot.skip(ftype)
+      else:
+        iprot.skip(ftype)
+      iprot.readFieldEnd()
+    iprot.readStructEnd()
+
+  def write(self, oprot):
+    if oprot.__class__ == TBinaryProtocol.TBinaryProtocolAccelerated and self.thrift_spec is not None and fastbinary is not None:
+      oprot.trans.write(fastbinary.encode_binary(self, (self.__class__, self.thrift_spec)))
+      return
+    oprot.writeStructBegin('system_reset_fixtures_result')
     if self.success is not None:
       oprot.writeFieldBegin('success', TType.BOOL, 0)
       oprot.writeBool(self.success)
