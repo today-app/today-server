@@ -1,6 +1,6 @@
-from mongoengine import connect, Document, IntField, DateTimeField, EmbeddedDocument, StringField, EmbeddedDocumentField, \
-    ListField
 import redis
+from mongoengine import connect, Document, IntField, DateTimeField, EmbeddedDocument, StringField, \
+    EmbeddedDocumentField,  ListField
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
@@ -44,6 +44,9 @@ class Post(Document):
     user_id = IntField(required=True)
     text = StringField()
 
+
+class PostComment(Document):
+    post_id = IntField(required=True)
     comments = ListField(EmbeddedDocumentField(Comment))
 
 

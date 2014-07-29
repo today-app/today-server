@@ -39,8 +39,19 @@ class TestPostController(TestCase):
         self.assertEqual(1, res)
 
     def test_post_comment_create(self):
-        post_id = self.client.post_create(1, 'hello')
-        self.assertEqual(1, post_id)
+        user_id = 1
+        post_id = self.client.post_create(user_id, 'hello')
+        self.assertTrue(self.client.post_comment_create(user_id, post_id, 'text'))
+
+    def test_post_comment_list(self):
+        user_id = 1
+        post_id = self.client.post_create(user_id, 'hello')
+        comments = self.client.post_comment_list(user_id, post_id)
+        self.assertEqual(0, len(comments))
+
+        self.assertTrue(self.client.post_comment_create(user_id, post_id, 'text'))
+        comments = self.client.post_comment_list(user_id, post_id)
+        self.assertEqual(1, len(comments))
 
     @classmethod
     def tearDownClass(cls):

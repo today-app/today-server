@@ -4,7 +4,7 @@ import os
 from unittest import TestCase
 from faker import Factory
 from controllers.post import PostController
-from db import Connection, Post
+from db import Connection, Post, PostComment
 from log import Logger
 from settings import Setting
 
@@ -22,10 +22,9 @@ class TestPostController(TestCase):
         conn = Connection()
         conn.connect(setting.config)
 
-        # initialize logger
-        Logger.init(**setting.config.twisted.logging)
 
         Post.drop_collection()
+        PostComment.drop_collection()
 
         # Redis 초기화
         self.redis = conn.redis
@@ -53,5 +52,20 @@ class TestPostController(TestCase):
         self.assertEqual(post_id, post.id)
         # self.assertTrue(pc.get())
 
+    def test_comment_create(self):
+        user_id = 1
+        controller = PostController()
+        post_id = controller.create(user_id, 'hello world')
+        self.assertTrue(controller.comment_create(user_id, post_id, 'text'))
 
+    def test_comment_list(self):
+        user_id = 1
+        controller = PostController()
+        post_id = controller.create(user_id, 'hello world')
+        comments0 = controller.comment_list(user_id, post_id)
+        self.assertEqual(0, len(comments0))
+        self.assertTrue(controller.comment_create(user_id, post_id, 'text'))
+
+        comments1 = controller.comment_list(user_id, post_id)
+        self.assertEqual(1, len(comments1))
 

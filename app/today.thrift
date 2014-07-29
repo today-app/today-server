@@ -11,7 +11,8 @@ struct User {
 
 struct Comment {
     1: int id
-    2: string text
+    2: int user_id
+    3: string text
 }
 
 struct Post {

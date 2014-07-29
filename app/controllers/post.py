@@ -29,7 +29,7 @@ class PostController:
         :type user_id: int
         :type text: str
         """
-        post = (PostImpl()).get(user_id=user_id, id=post_id)
+        post = (PostImpl()).get(user_id=user_id, post_id=post_id)
         return ttypes.Post(id=post.post_id, text=post.text.encode('utf-8'))
 
     def list(self, user_id):
@@ -54,3 +54,13 @@ class PostController:
 
     def comment_create(self, user_id, post_id, text):
         return (PostImpl()).comment_create(user_id, post_id, text)
+
+    def comment_list(self, user_id, post_id):
+        ret = []
+        comments = (PostImpl()).comment_list(post_id)
+        for comment in comments:
+            t_comment = ttypes.Comment(user_id=comment.user_id, text=comment.text)
+            ret = ret + [t_comment]
+
+        return ret
+

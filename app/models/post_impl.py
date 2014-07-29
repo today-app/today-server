@@ -12,27 +12,29 @@ class PostImpl(ModelImpl):
 
         return p.post_id
 
-    def get(self, user_id, id):
-        post = db.Post.objects(post_id=id).first()
+    def get(self, user_id, post_id):
+        post = db.Post.objects(post_id=post_id).first()
 
         return post
 
     def list(self):
         return db.Post.objects.all()
 
-
     def comment_create(self, user_id, post_id, text):
-        post = db.Post.objects(post_id=post_id).first()
+        pc = db.PostComment.objects(post_id=post_id).first()
+        if not pc:
+            pc = db.PostComment(post_id=post_id)
+            pc.save()
+
         comment = db.Comment(user_id=user_id, text=text)
-        post.comments.append(comment)
-        post.save()
+        pc.comments.append(comment)
+        pc.save()
 
         return True
-        # letter_comment = LetterComment.objects(letter_id=letter_id).first()
-        # if not letter_comment:
-        #     letter_comment = LetterComment(letter_id=letter_id)
-        #     letter_comment.save()
-        #
-        # Logger.debug(str(letter_comment.comments))
-        # letter_comment.comments.append(Comment(**comment))
-        # letter_comment.save()
+
+    def comment_list(self, post_id):
+        pc = db.PostComment.objects(post_id=post_id).first()
+        if not pc:
+            return []
+
+        return pc.comments
