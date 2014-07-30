@@ -23,6 +23,7 @@ struct Post {
 
 service TodayInternalApiService
 {
+    // post
     int post_create(1: int user_id, 2: string text),
 
     Post post_get(1: int user_id, 2: int post_id),
@@ -31,6 +32,7 @@ service TodayInternalApiService
 
     bool post_delete(1: int user_id, 2: int post_id),
 
+    // comment
     bool post_comment_create(1: int user_id, 2: int post_id, 3: string text),
 
     list <Comment> post_comment_list(1: int user_id, 2: int post_id),
