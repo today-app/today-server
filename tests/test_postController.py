@@ -4,17 +4,17 @@ import os
 from unittest import TestCase
 from faker import Factory
 from controllers.post import PostController
-from db import Connection, Post, PostComment
+from db import Connection, Post, PostComment, Friendship
 from log import Logger
 from settings import Setting
 
 from gen.today import ttypes
 
-current_dir = os.path.dirname(os.path.abspath(__file__))
 
 class TestPostController(TestCase):
     def setUp(self):
         super(TestPostController, self).setUp()
+        current_dir = os.path.dirname(os.path.abspath(__file__))
 
         setting = Setting()
         setting.initialize(os.path.join(current_dir, 'settings.cfg'))
@@ -22,9 +22,8 @@ class TestPostController(TestCase):
         conn = Connection()
         conn.connect(setting.config)
 
-
-        Post.drop_collection()
-        PostComment.drop_collection()
+        for collection in [Post, PostComment, Friendship]:
+            collection.drop_collection()
 
         # Redis 초기화
         self.redis = conn.redis
