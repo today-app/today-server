@@ -1,6 +1,6 @@
 import redis
 from mongoengine import connect, Document, IntField, DateTimeField, EmbeddedDocument, StringField, \
-    EmbeddedDocumentField,  ListField
+    EmbeddedDocumentField,  ListField, BooleanField
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
@@ -50,3 +50,7 @@ class PostComment(Document):
     comments = ListField(EmbeddedDocumentField(Comment))
 
 
+class Friendship(Document):
+    actor_id = IntField(required=True)
+    target_id = IntField(required=True)
+    is_accepted = BooleanField(required=True)

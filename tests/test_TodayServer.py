@@ -53,6 +53,25 @@ class TestPostController(TestCase):
         comments = self.client.post_comment_list(user_id, post_id)
         self.assertEqual(1, len(comments))
 
+    def test_friend_ids(self):
+        user_id = 1
+        ids = self.client.friend_ids(user_id)
+        self.assertIsInstance(ids, list)
+        self.assertEqual(0, len(ids))
+
+    def test_friendship_request(self):
+        actor_id = 1
+        target_id = 2
+        self.assertTrue(self.client.friendship_create(actor_id, target_id))
+
+    def test_friendship_incoming(self):
+        actor_id = 1
+        target_id = 2
+        self.assertEqual([], self.client.friendship_incoming(target_id))
+
+        self.assertTrue(self.client.friendship_create(actor_id, target_id))
+        self.assertEqual([actor_id], self.client.friendship_incoming(target_id))
+
     @classmethod
     def tearDownClass(cls):
         super(TestPostController, cls).tearDownClass()

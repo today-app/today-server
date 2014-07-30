@@ -21,6 +21,22 @@ struct Post {
     3: User user
 }
 
+exception NotFoundError {
+  1: string why
+}
+
+exception AlreadyExistsError {
+  1: string why
+}
+
+exception InputValidationError {
+  1: string why
+}
+
+exception InvalidRequest {
+  1: string why
+}
+
 service TodayInternalApiService
 {
     // post
@@ -39,5 +55,29 @@ service TodayInternalApiService
 
     bool post_comment_delete(1: int user_id, 2: int post_id, 3: int comment_id),
 
+    // friend
+    list <int> friend_ids(1: int user_id),
+
+    bool friend_remove(1: int actor_id, 2: int target_id),
+
+    // friendship
+    list <int> friendship_incoming(1: int user_id),
+
+    list <int> friendship_outgoing(1: int user_id),
+
+    bool friendship_create(1: int actor_id, 2: int target_id)
+            throws (1: InputValidationError validation_err, 2: AlreadyExistsError already_exists_err),
+
+    bool friendship_cancel(1: int actor_id, 2: int target_id)
+            throws (1: InvalidRequest invalid_request, 2: NotFoundError not_found_error),
+
+    bool friendship_accept(1: int actor_id, 2: int target_id)
+            throws (1: InputValidationError validation_err, 2: NotFoundError not_found_error),
+
+    bool friendship_reject(1: int actor_id, 2: int target_id)
+            throws (1: InputValidationError validation_err, 2: NotFoundError not_found_error),
+
+
+    // system
     bool system_reset_fixtures()
 }
