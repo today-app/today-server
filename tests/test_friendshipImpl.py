@@ -40,3 +40,14 @@ class TestFriendshipImpl(TestCase):
         self.assertTrue(impl.create(actor_id, target_id))
         self.assertRaises(ttypes.AlreadyExistsError, impl.create, actor_id, target_id)
 
+    def test_outgoing(self):
+        impl = FriendshipImpl()
+        actor_id = 1
+        target_id = 2
+        ids = impl.outgoing(actor_id)
+        self.assertIsInstance(ids, list)
+        self.assertEqual(0, len(ids))
+
+        self.assertTrue(impl.create(actor_id, target_id))
+        ids = impl.outgoing(actor_id)
+        self.assertEqual(1, len(ids))

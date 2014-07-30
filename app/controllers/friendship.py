@@ -10,3 +10,9 @@ class FriendshipController:
         for user in (FriendshipImpl()).incoming(user_id):
             ret = ret + [user.actor_id]
         return ret
+
+    def outgoing(self, user_id):
+        ret = []
+        for user in (FriendshipImpl()).outgoing(user_id):
+            ret = ret + [user.target_id]
+        return ret

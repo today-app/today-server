@@ -72,6 +72,14 @@ class TestPostController(TestCase):
         self.assertTrue(self.client.friendship_create(actor_id, target_id))
         self.assertEqual([actor_id], self.client.friendship_incoming(target_id))
 
+    def test_friendship_outgoing(self):
+        actor_id = 1
+        target_id = 2
+        self.assertEqual([], self.client.friendship_outgoing(actor_id))
+
+        self.assertTrue(self.client.friendship_create(actor_id, target_id))
+        self.assertEqual([target_id], self.client.friendship_outgoing(actor_id))
+
     @classmethod
     def tearDownClass(cls):
         super(TestPostController, cls).tearDownClass()

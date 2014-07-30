@@ -20,4 +20,12 @@ class FriendshipImpl(ModelImpl):
         :type user_id: int
         :rtype bool
         """
-        return Friendship.objects(target_id=user_id, is_accepted=False).all()
+        return list(Friendship.objects(target_id=user_id, is_accepted=False).all())
+
+    def outgoing(self, user_id):
+        """
+
+        :type user_id: int
+        :rtype bool
+        """
+        return list(Friendship.objects(actor_id=user_id, is_accepted=False).all())
