@@ -61,3 +61,11 @@ class FriendshipImpl(ModelImpl):
 
         return ids
 
+    def reject(self, actor_id, target_id):
+        request = Friendship.objects(actor_id=target_id, target_id=actor_id, is_accepted=False).first()
+        if request is None:
+            raise NotFoundError()
+
+        resp = request.delete()
+        return True
+

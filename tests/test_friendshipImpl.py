@@ -76,3 +76,12 @@ class TestFriendshipImpl(TestCase):
         target_id = 2
 
         self.assertEqual([], impl.friend_ids(actor_id))
+
+    def test_reject(self):
+        impl = FriendshipImpl()
+        actor_id = 1
+        target_id = 2
+        self.assertRaises(ttypes.NotFoundError, impl.reject, actor_id, target_id)
+        self.assertTrue(impl.create(target_id, actor_id))
+        self.assertTrue(impl.reject(actor_id, target_id))
+        self.assertNotIn(target_id, impl.incoming(actor_id))

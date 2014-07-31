@@ -99,6 +99,15 @@ class TestPostController(TestCase):
         self.assertTrue(self.client.friendship_create(actor_id, target_id))
         self.assertTrue(self.client.friendship_cancel(actor_id, target_id))
 
+    def test_friendship_reject(self):
+        actor_id = 1
+        target_id = 2
+        self.assertRaises(NotFoundError, self.client.friendship_reject, actor_id, target_id)
+        self.assertTrue(self.client.friendship_create(target_id, actor_id))
+        self.assertIn(target_id, self.client.friendship_incoming(actor_id))
+        self.assertTrue(self.client.friendship_reject(actor_id, target_id))
+        self.assertNotIn(target_id, self.client.friendship_incoming(actor_id))
+
     @classmethod
     def tearDownClass(cls):
         super(TestPostController, cls).tearDownClass()
