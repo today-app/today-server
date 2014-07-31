@@ -55,10 +55,14 @@ class TestPostController(TestCase):
         self.assertEqual(1, len(comments))
 
     def test_friend_ids(self):
-        user_id = 1
-        ids = self.client.friend_ids(user_id)
+        actor_id = 1
+        target_id = 2
+        ids = self.client.friend_ids(actor_id)
         self.assertIsInstance(ids, list)
         self.assertEqual(0, len(ids))
+        self.assertTrue(self.client.friendship_create(actor_id, target_id))
+        self.assertTrue(self.client.friendship_accept(target_id, actor_id))
+        self.assertEqual([target_id], self.client.friend_ids(actor_id))
 
     def test_friendship_request(self):
         actor_id = 1
@@ -94,7 +98,6 @@ class TestPostController(TestCase):
         self.assertRaises(NotFoundError, self.client.friendship_cancel, actor_id, target_id)
         self.assertTrue(self.client.friendship_create(actor_id, target_id))
         self.assertTrue(self.client.friendship_cancel(actor_id, target_id))
-
 
     @classmethod
     def tearDownClass(cls):

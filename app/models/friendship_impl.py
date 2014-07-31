@@ -1,3 +1,4 @@
+from mongoengine import Q
 from db import Friendship
 from gen.today.ttypes import AlreadyExistsError, NotFoundError
 from models.model_impl import ModelImpl
@@ -47,3 +48,16 @@ class FriendshipImpl(ModelImpl):
 
         request.delete()
         return True
+
+    def friend_ids(self, actor_id):
+        friendship = Friendship.objects((Q(target_id=actor_id) | Q(actor_id=actor_id)) & Q(is_accepted=True)).all()
+
+        ids = []
+        for item in friendship:
+            if item.actor_id == actor_id:
+                ids.append(item.target_id)
+            elif item.target_id == actor_id:
+                ids.append(item.actor_id)
+
+        return ids
+
