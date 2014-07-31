@@ -8,6 +8,7 @@ from thrift.transport import TTransport
 from thrift.transport import TSocket
 from thrift.protocol import TBinaryProtocol
 from genpy.today import TodayInternalApiService
+from genpy.today.ttypes import NotFoundError
 
 
 pp = pprint.PrettyPrinter(indent=2)
@@ -79,6 +80,13 @@ class TestPostController(TestCase):
 
         self.assertTrue(self.client.friendship_create(actor_id, target_id))
         self.assertEqual([target_id], self.client.friendship_outgoing(actor_id))
+
+    def test_friendship_accept(self):
+        actor_id = 1
+        target_id = 2
+        self.assertRaises(NotFoundError, self.client.friendship_accept, actor_id, target_id)
+        self.assertTrue(self.client.friendship_create(actor_id, target_id))
+        self.assertTrue(self.client.friendship_accept(target_id, actor_id))
 
     @classmethod
     def tearDownClass(cls):

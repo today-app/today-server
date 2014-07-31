@@ -1,5 +1,5 @@
 from db import Friendship
-from gen.today.ttypes import AlreadyExistsError
+from gen.today.ttypes import AlreadyExistsError, NotFoundError
 from models.model_impl import ModelImpl
 
 
@@ -29,3 +29,13 @@ class FriendshipImpl(ModelImpl):
         :rtype bool
         """
         return list(Friendship.objects(actor_id=user_id, is_accepted=False).all())
+
+    def accept(self, actor_id, target_id):
+        request = Friendship.objects(actor_id=target_id, target_id=actor_id, is_accepted=False).first()
+        if request is None:
+            raise NotFoundError(why='friendship request not found.')
+
+        request.is_accepted = True
+        request.save()
+
+        return True

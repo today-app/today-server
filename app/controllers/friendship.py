@@ -1,3 +1,4 @@
+from gen.today import ttypes
 from models.friendship_impl import FriendshipImpl
 
 
@@ -16,3 +17,15 @@ class FriendshipController:
         for user in (FriendshipImpl()).outgoing(user_id):
             ret = ret + [user.target_id]
         return ret
+
+    def accept(self, actor_id, target_id):
+        # request = Friendship.objects(actor_id=target_id, target_id=actor_id, is_accepted=False).first()
+        # if request is None:
+        #     raise NotFoundError(why='friendship request not found.')
+        #
+        # request.is_accepted = True
+        # request.save()
+        #
+        # raise ttypes.NotFoundError()
+        impl = FriendshipImpl()
+        return impl.accept(actor_id, target_id)

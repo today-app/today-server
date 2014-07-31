@@ -51,3 +51,12 @@ class TestFriendshipImpl(TestCase):
         self.assertTrue(impl.create(actor_id, target_id))
         ids = impl.outgoing(actor_id)
         self.assertEqual(1, len(ids))
+
+    def test_accept(self):
+        impl = FriendshipImpl()
+        actor_id = 1
+        target_id = 2
+
+        self.assertRaises(ttypes.NotFoundError, impl.accept, target_id, actor_id)
+        self.assertTrue(impl.create(actor_id, target_id))
+        self.assertTrue(impl.accept(target_id, actor_id))
