@@ -29,3 +29,7 @@ class FriendshipController:
         # raise ttypes.NotFoundError()
         impl = FriendshipImpl()
         return impl.accept(actor_id, target_id)
+
+    def cancel(self, actor_id, target_id):
+        impl = FriendshipImpl()
+        return impl.cancel(actor_id, target_id)

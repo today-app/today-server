@@ -39,3 +39,11 @@ class FriendshipImpl(ModelImpl):
         request.save()
 
         return True
+
+    def cancel(self, actor_id, target_id):
+        request = Friendship.objects(actor_id=actor_id, target_id=target_id, is_accepted=False).first()
+        if request is None:
+            raise NotFoundError()
+
+        request.delete()
+        return True
