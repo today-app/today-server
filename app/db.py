@@ -1,6 +1,8 @@
+import json
+from datetime import datetime
 import redis
 from mongoengine import connect, Document, IntField, DateTimeField, EmbeddedDocument, StringField, \
-    EmbeddedDocumentField,  ListField, BooleanField
+    EmbeddedDocumentField, ListField, BooleanField
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
@@ -44,6 +46,30 @@ class Post(Document):
     user_id = IntField(required=True)
     text = StringField()
 
+    def to_dict(self):
+        data = json.loads(self.to_json())
+        data['id'] = str(self.id)
+
+        del data['_id']
+        # del data['_cls']
+
+        # created_dt = int(data['created_dt']['$date'] / 1000)
+        # try:
+        #     data['created_dt'] = datetime.fromtimestamp(created_dt).strftime('%Y-%m-%d %H:%M:%S.%f')
+        # except Exception as e:
+        #     data['created_dt'] = '1970-01-01 00:00:00.000'
+        #
+        # if 'published_dt' in data:
+        #     published_dt = int(data['published_dt']['$date'] / 1000)
+        #     try:
+        #         data['published_dt'] = datetime.fromtimestamp(published_dt).strftime('%Y-%m-%d %H:%M:%S.%f')
+        #     except Exception as e:
+        #         data['published_dt'] = '1970-01-01 00:00:00.000'
+        # else:
+        #     data['published_dt'] = ''
+
+        return data
+
 
 class PostComment(Document):
     post_id = IntField(required=True)
@@ -54,3 +80,31 @@ class Friendship(Document):
     actor_id = IntField(required=True)
     target_id = IntField(required=True)
     is_accepted = BooleanField(required=True)
+
+
+class TimelineItem(EmbeddedDocument):
+    type = StringField()
+    item_id = IntField()
+    key = IntField()
+
+
+class Timeline(Document):
+    user_id = IntField(required=True, unique=True)
+    items = ListField(EmbeddedDocumentField(TimelineItem))
+    created_dt = DateTimeField()
+    meta = {'allow_inheritance': True}
+
+    def to_dict(self):
+        data = json.loads(self.to_json())
+        data['id'] = str(self.id)
+
+        del data['_id']
+        del data['_cls']
+
+        created_dt = int(data['created_dt']['$date'] / 1000)
+        try:
+            data['created_dt'] = datetime.fromtimestamp(created_dt).strftime('%Y-%m-%d %H:%M:%S')
+        except Exception as e:
+            data['created_dt'] = '1970-01-01 00:00:00'
+
+        return data

@@ -47,6 +47,10 @@ class PostController:
 
         return ret
 
+    def delete(self, user_id, post_id):
+        return (PostImpl()).delete(user_id, post_id)
+        # raise ttypes.NotFoundError()
+
     def comment_create(self, user_id, post_id, text):
         return (PostImpl()).comment_create(user_id, post_id, text)
 

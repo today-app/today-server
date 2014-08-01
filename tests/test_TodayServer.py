@@ -39,6 +39,26 @@ class TestPostController(TestCase):
         res = self.client.post_create(1, 'hello')
         self.assertEqual(1, res)
 
+    def test_post_delete(self):
+        user_id = 1
+        post_id = 1
+        self.assertRaises(NotFoundError, self.client.post_delete, user_id, post_id)
+        post_id = self.client.post_create(user_id, 'hello')
+        posts = self.client.post_list(user_id)
+        self.assertEqual(1, len(posts))
+        self.assertTrue(self.client.post_delete(user_id, post_id))
+
+    def test_post_list(self):
+        user_id = 1
+        post_id = self.client.post_create(user_id, 'hello')
+        self.assertEqual(1, post_id)
+        posts = self.client.post_list(user_id)
+        self.assertEqual(1, len(posts))
+        self.assertEqual(post_id, posts[0].id)
+        post_id = self.client.post_create(user_id, 'hello')
+        posts = self.client.post_list(user_id)
+        self.assertEqual(2, len(posts))
+
     def test_post_comment_create(self):
         user_id = 1
         post_id = self.client.post_create(user_id, 'hello')
@@ -107,6 +127,16 @@ class TestPostController(TestCase):
         self.assertIn(target_id, self.client.friendship_incoming(actor_id))
         self.assertTrue(self.client.friendship_reject(actor_id, target_id))
         self.assertNotIn(target_id, self.client.friendship_incoming(actor_id))
+
+    def test_timeline_list(self):
+        actor_id = 1
+        self.assertEqual([], self.client.timeline_list(actor_id))
+        # self.assertEqual(1, len(self.client.timeline_list(actor_id)))
+        post_id = self.client.post_create(actor_id, 'sample text')
+        self.assertEqual(1, len(self.client.timeline_list(actor_id)))
+        post_id = self.client.post_create(actor_id, '한글 테스트')
+        posts = self.client.timeline_list(actor_id)
+        self.assertEqual(2, len(posts))
 
     @classmethod
     def tearDownClass(cls):

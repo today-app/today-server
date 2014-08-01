@@ -38,6 +38,7 @@ if len(sys.argv) <= 1 or sys.argv[1] == '--help':
   print '  bool friendship_cancel(int actor_id, int target_id)'
   print '  bool friendship_accept(int actor_id, int target_id)'
   print '  bool friendship_reject(int actor_id, int target_id)'
+  print '   timeline_list(int actor_id)'
   print '  bool system_reset_fixtures()'
   print ''
   sys.exit(0)
@@ -179,6 +180,12 @@ elif cmd == 'friendship_reject':
     print 'friendship_reject requires 2 args'
     sys.exit(1)
   pp.pprint(client.friendship_reject(eval(args[0]),eval(args[1]),))
+
+elif cmd == 'timeline_list':
+  if len(args) != 1:
+    print 'timeline_list requires 1 args'
+    sys.exit(1)
+  pp.pprint(client.timeline_list(eval(args[0]),))
 
 elif cmd == 'system_reset_fixtures':
   if len(args) != 0:

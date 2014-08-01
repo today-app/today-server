@@ -6,6 +6,7 @@ from unittest import TestCase
 from faker import Factory
 
 from db import Connection, Post, PostComment
+from gen.today import *
 from log import Logger
 from models.post_impl import PostImpl
 from settings import Setting
@@ -61,3 +62,27 @@ class TestPostImpl(TestCase):
 
         comments = model.comment_list(post_id)
         self.assertEqual(1, len(comments))
+
+    def test_delete(self):
+        user_id = 1
+        post_id = 1
+        impl = PostImpl()
+
+        self.assertEqual(0, len(impl.list()))
+
+        self.assertRaises(ttypes.NotFoundError, impl.delete, user_id, post_id)
+
+        impl.create(user_id, 'sample text')
+        self.assertEqual(1, len(impl.list()))
+
+        self.assertTrue(impl.delete(user_id, post_id))
+        self.assertEqual(0, len(impl.list()))
+
+
+        post_ids = []
+        for post in impl.list():
+            post_ids = post_ids + [post.post_id]
+
+        self.assertNotIn(post_id, post_ids)
+
+

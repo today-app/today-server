@@ -46,7 +46,8 @@ service TodayInternalApiService
 
     list <Post> post_list(1: int user_id),
 
-    bool post_delete(1: int user_id, 2: int post_id),
+    bool post_delete(1: int user_id, 2: int post_id)
+            throws (1: NotFoundError not_found_error),
 
     // comment
     bool post_comment_create(1: int user_id, 2: int post_id, 3: string text),
@@ -77,6 +78,8 @@ service TodayInternalApiService
     bool friendship_reject(1: int actor_id, 2: int target_id)
             throws (1: InputValidationError validation_err, 2: NotFoundError not_found_error),
 
+    // timeline
+    list <Post> timeline_list(1: int actor_id),
 
     // system
     bool system_reset_fixtures()

@@ -68,3 +68,4 @@ class TestPostController(TestCase):
         comments1 = controller.comment_list(user_id, post_id)
         self.assertEqual(1, len(comments1))
 
+

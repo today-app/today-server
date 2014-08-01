@@ -1,4 +1,6 @@
 import db
+from gen.today.ttypes import *
+from models.timeline_impl import TimelineImpl
 from utils import get_next_id
 
 from models.model_impl import ModelImpl
@@ -9,6 +11,9 @@ class PostImpl(ModelImpl):
         post_id = get_next_id()
         p = db.Post(post_id, user_id, text)
         p.save()
+
+        t_impl = TimelineImpl()
+        t_impl.distribute(user_id, p.to_dict())
 
         return p.post_id
 
@@ -38,3 +43,12 @@ class PostImpl(ModelImpl):
             return []
 
         return pc.comments
+
+    def delete(self, user_id, post_id):
+        post = db.Post.objects(post_id=post_id).first()
+        if post is None:
+            raise NotFoundError()
+
+        post.delete()
+
+        return True
