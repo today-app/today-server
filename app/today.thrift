@@ -84,7 +84,8 @@ service TodayInternalApiService
     User users_get_by_username(1: string username),
 
     // timeline
-    list <Post> timeline_list(1: int actor_id),
+    list <Post> timeline_home(1: int actor_id),
+    list <Post> timeline_user(1: int actor_id),
 
     // system
     bool system_reset_fixtures()

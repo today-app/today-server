@@ -1,6 +1,6 @@
 import db
 from gen.today.ttypes import *
-from models.timeline_impl import TimelineImpl
+from tasks import fanout
 from utils import get_next_id
 
 from models.model_impl import ModelImpl
@@ -12,8 +12,7 @@ class PostImpl(ModelImpl):
         p = db.Post(post_id, user_id, text)
         p.save()
 
-        t_impl = TimelineImpl()
-        t_impl.distribute(user_id, p.to_dict())
+        fanout.delay(p)
 
         return p.post_id
 

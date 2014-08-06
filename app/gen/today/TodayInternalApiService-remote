@@ -40,7 +40,8 @@ if len(sys.argv) <= 1 or sys.argv[1] == '--help':
   print '  bool friendship_reject(int actor_id, int target_id)'
   print '  User users_get(int user_id)'
   print '  User users_get_by_username(string username)'
-  print '   timeline_list(int actor_id)'
+  print '   timeline_home(int actor_id)'
+  print '   timeline_user(int actor_id)'
   print '  bool system_reset_fixtures()'
   print ''
   sys.exit(0)
@@ -195,11 +196,17 @@ elif cmd == 'users_get_by_username':
     sys.exit(1)
   pp.pprint(client.users_get_by_username(args[0],))
 
-elif cmd == 'timeline_list':
+elif cmd == 'timeline_home':
   if len(args) != 1:
-    print 'timeline_list requires 1 args'
+    print 'timeline_home requires 1 args'
     sys.exit(1)
-  pp.pprint(client.timeline_list(eval(args[0]),))
+  pp.pprint(client.timeline_home(eval(args[0]),))
+
+elif cmd == 'timeline_user':
+  if len(args) != 1:
+    print 'timeline_user requires 1 args'
+    sys.exit(1)
+  pp.pprint(client.timeline_user(eval(args[0]),))
 
 elif cmd == 'system_reset_fixtures':
   if len(args) != 0:

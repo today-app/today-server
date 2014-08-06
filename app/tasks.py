@@ -6,6 +6,8 @@ from mongoengine import connect
 
 from db import Connection, User
 from log import Logger
+from models.friendship_impl import FriendshipImpl
+from models.timeline_impl import UserTimelineImpl, HomeTimelineImpl
 from settings import Setting
 
 
@@ -49,9 +51,12 @@ def get_user(user_id):
     return user.serialize
 
 
-# @app.task
-# def publish_scheduled():
-#     Logger.info('publish_scheduled')
-#
-#     impl = LetterImpl()
-#     return impl.publish_scheduled()
+@app.task(ignore_result=True)
+def fanout(p):
+    print 'fanout(): %s' % p.to_dict()
+
+    (UserTimelineImpl()).distribute(p.user_id, p.to_dict())
+    for user_id in (FriendshipImpl()).friend_ids(p.user_id) + [p.user_id]:
+        (HomeTimelineImpl()).distribute(user_id, p.to_dict())
+
+    print 'fanout(): done... '

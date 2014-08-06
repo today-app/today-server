@@ -5,7 +5,7 @@ from unittest import TestCase
 from faker import Factory
 from controllers.post import PostController
 from controllers.timeline import TimelineController
-from db import Connection, Post, PostComment, Friendship, Timeline
+from db import Connection, Post, PostComment, Friendship, UserTimeline
 from log import Logger
 from settings import Setting
 
@@ -23,7 +23,7 @@ class TesTimelineController(TestCase):
         conn = Connection()
         conn.connect(setting.config)
 
-        for collection in [Post, PostComment, Friendship, Timeline]:
+        for collection in [Post, PostComment, Friendship, UserTimeline]:
             collection.drop_collection()
 
         # Redis 초기화

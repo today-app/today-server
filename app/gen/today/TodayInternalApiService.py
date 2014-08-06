@@ -153,7 +153,14 @@ class Iface(Interface):
     """
     pass
 
-  def timeline_list(actor_id):
+  def timeline_home(actor_id):
+    """
+    Parameters:
+     - actor_id
+    """
+    pass
+
+  def timeline_user(actor_id):
     """
     Parameters:
      - actor_id
@@ -778,38 +785,71 @@ class Client:
       return d.callback(result.success)
     return d.errback(TApplicationException(TApplicationException.MISSING_RESULT, "users_get_by_username failed: unknown result"))
 
-  def timeline_list(self, actor_id):
+  def timeline_home(self, actor_id):
     """
     Parameters:
      - actor_id
     """
     self._seqid += 1
     d = self._reqs[self._seqid] = defer.Deferred()
-    self.send_timeline_list(actor_id)
+    self.send_timeline_home(actor_id)
     return d
 
-  def send_timeline_list(self, actor_id):
+  def send_timeline_home(self, actor_id):
     oprot = self._oprot_factory.getProtocol(self._transport)
-    oprot.writeMessageBegin('timeline_list', TMessageType.CALL, self._seqid)
-    args = timeline_list_args()
+    oprot.writeMessageBegin('timeline_home', TMessageType.CALL, self._seqid)
+    args = timeline_home_args()
     args.actor_id = actor_id
     args.write(oprot)
     oprot.writeMessageEnd()
     oprot.trans.flush()
 
-  def recv_timeline_list(self, iprot, mtype, rseqid):
+  def recv_timeline_home(self, iprot, mtype, rseqid):
     d = self._reqs.pop(rseqid)
     if mtype == TMessageType.EXCEPTION:
       x = TApplicationException()
       x.read(iprot)
       iprot.readMessageEnd()
       return d.errback(x)
-    result = timeline_list_result()
+    result = timeline_home_result()
     result.read(iprot)
     iprot.readMessageEnd()
     if result.success is not None:
       return d.callback(result.success)
-    return d.errback(TApplicationException(TApplicationException.MISSING_RESULT, "timeline_list failed: unknown result"))
+    return d.errback(TApplicationException(TApplicationException.MISSING_RESULT, "timeline_home failed: unknown result"))
+
+  def timeline_user(self, actor_id):
+    """
+    Parameters:
+     - actor_id
+    """
+    self._seqid += 1
+    d = self._reqs[self._seqid] = defer.Deferred()
+    self.send_timeline_user(actor_id)
+    return d
+
+  def send_timeline_user(self, actor_id):
+    oprot = self._oprot_factory.getProtocol(self._transport)
+    oprot.writeMessageBegin('timeline_user', TMessageType.CALL, self._seqid)
+    args = timeline_user_args()
+    args.actor_id = actor_id
+    args.write(oprot)
+    oprot.writeMessageEnd()
+    oprot.trans.flush()
+
+  def recv_timeline_user(self, iprot, mtype, rseqid):
+    d = self._reqs.pop(rseqid)
+    if mtype == TMessageType.EXCEPTION:
+      x = TApplicationException()
+      x.read(iprot)
+      iprot.readMessageEnd()
+      return d.errback(x)
+    result = timeline_user_result()
+    result.read(iprot)
+    iprot.readMessageEnd()
+    if result.success is not None:
+      return d.callback(result.success)
+    return d.errback(TApplicationException(TApplicationException.MISSING_RESULT, "timeline_user failed: unknown result"))
 
   def system_reset_fixtures(self):
     self._seqid += 1
@@ -863,7 +903,8 @@ class Processor(TProcessor):
     self._processMap["friendship_reject"] = Processor.process_friendship_reject
     self._processMap["users_get"] = Processor.process_users_get
     self._processMap["users_get_by_username"] = Processor.process_users_get_by_username
-    self._processMap["timeline_list"] = Processor.process_timeline_list
+    self._processMap["timeline_home"] = Processor.process_timeline_home
+    self._processMap["timeline_user"] = Processor.process_timeline_user
     self._processMap["system_reset_fixtures"] = Processor.process_system_reset_fixtures
 
   def process(self, iprot, oprot):
@@ -1215,18 +1256,34 @@ class Processor(TProcessor):
     oprot.writeMessageEnd()
     oprot.trans.flush()
 
-  def process_timeline_list(self, seqid, iprot, oprot):
-    args = timeline_list_args()
+  def process_timeline_home(self, seqid, iprot, oprot):
+    args = timeline_home_args()
     args.read(iprot)
     iprot.readMessageEnd()
-    result = timeline_list_result()
-    d = defer.maybeDeferred(self._handler.timeline_list, args.actor_id)
-    d.addCallback(self.write_results_success_timeline_list, result, seqid, oprot)
+    result = timeline_home_result()
+    d = defer.maybeDeferred(self._handler.timeline_home, args.actor_id)
+    d.addCallback(self.write_results_success_timeline_home, result, seqid, oprot)
     return d
 
-  def write_results_success_timeline_list(self, success, result, seqid, oprot):
+  def write_results_success_timeline_home(self, success, result, seqid, oprot):
     result.success = success
-    oprot.writeMessageBegin("timeline_list", TMessageType.REPLY, seqid)
+    oprot.writeMessageBegin("timeline_home", TMessageType.REPLY, seqid)
+    result.write(oprot)
+    oprot.writeMessageEnd()
+    oprot.trans.flush()
+
+  def process_timeline_user(self, seqid, iprot, oprot):
+    args = timeline_user_args()
+    args.read(iprot)
+    iprot.readMessageEnd()
+    result = timeline_user_result()
+    d = defer.maybeDeferred(self._handler.timeline_user, args.actor_id)
+    d.addCallback(self.write_results_success_timeline_user, result, seqid, oprot)
+    return d
+
+  def write_results_success_timeline_user(self, success, result, seqid, oprot):
+    result.success = success
+    oprot.writeMessageBegin("timeline_user", TMessageType.REPLY, seqid)
     result.write(oprot)
     oprot.writeMessageEnd()
     oprot.trans.flush()
@@ -3591,7 +3648,7 @@ class users_get_by_username_result:
   def __ne__(self, other):
     return not (self == other)
 
-class timeline_list_args:
+class timeline_home_args:
   """
   Attributes:
    - actor_id
@@ -3628,7 +3685,7 @@ class timeline_list_args:
     if oprot.__class__ == TBinaryProtocol.TBinaryProtocolAccelerated and self.thrift_spec is not None and fastbinary is not None:
       oprot.trans.write(fastbinary.encode_binary(self, (self.__class__, self.thrift_spec)))
       return
-    oprot.writeStructBegin('timeline_list_args')
+    oprot.writeStructBegin('timeline_home_args')
     if self.actor_id is not None:
       oprot.writeFieldBegin('actor_id', TType.I32, 1)
       oprot.writeI32(self.actor_id)
@@ -3651,7 +3708,7 @@ class timeline_list_args:
   def __ne__(self, other):
     return not (self == other)
 
-class timeline_list_result:
+class timeline_home_result:
   """
   Attributes:
    - success
@@ -3693,12 +3750,140 @@ class timeline_list_result:
     if oprot.__class__ == TBinaryProtocol.TBinaryProtocolAccelerated and self.thrift_spec is not None and fastbinary is not None:
       oprot.trans.write(fastbinary.encode_binary(self, (self.__class__, self.thrift_spec)))
       return
-    oprot.writeStructBegin('timeline_list_result')
+    oprot.writeStructBegin('timeline_home_result')
     if self.success is not None:
       oprot.writeFieldBegin('success', TType.LIST, 0)
       oprot.writeListBegin(TType.STRUCT, len(self.success))
       for iter41 in self.success:
         iter41.write(oprot)
+      oprot.writeListEnd()
+      oprot.writeFieldEnd()
+    oprot.writeFieldStop()
+    oprot.writeStructEnd()
+
+  def validate(self):
+    return
+
+
+  def __repr__(self):
+    L = ['%s=%r' % (key, value)
+      for key, value in self.__dict__.iteritems()]
+    return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
+
+  def __eq__(self, other):
+    return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
+
+  def __ne__(self, other):
+    return not (self == other)
+
+class timeline_user_args:
+  """
+  Attributes:
+   - actor_id
+  """
+
+  thrift_spec = (
+    None, # 0
+    (1, TType.I32, 'actor_id', None, None, ), # 1
+  )
+
+  def __init__(self, actor_id=None,):
+    self.actor_id = actor_id
+
+  def read(self, iprot):
+    if iprot.__class__ == TBinaryProtocol.TBinaryProtocolAccelerated and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None and fastbinary is not None:
+      fastbinary.decode_binary(self, iprot.trans, (self.__class__, self.thrift_spec))
+      return
+    iprot.readStructBegin()
+    while True:
+      (fname, ftype, fid) = iprot.readFieldBegin()
+      if ftype == TType.STOP:
+        break
+      if fid == 1:
+        if ftype == TType.I32:
+          self.actor_id = iprot.readI32();
+        else:
+          iprot.skip(ftype)
+      else:
+        iprot.skip(ftype)
+      iprot.readFieldEnd()
+    iprot.readStructEnd()
+
+  def write(self, oprot):
+    if oprot.__class__ == TBinaryProtocol.TBinaryProtocolAccelerated and self.thrift_spec is not None and fastbinary is not None:
+      oprot.trans.write(fastbinary.encode_binary(self, (self.__class__, self.thrift_spec)))
+      return
+    oprot.writeStructBegin('timeline_user_args')
+    if self.actor_id is not None:
+      oprot.writeFieldBegin('actor_id', TType.I32, 1)
+      oprot.writeI32(self.actor_id)
+      oprot.writeFieldEnd()
+    oprot.writeFieldStop()
+    oprot.writeStructEnd()
+
+  def validate(self):
+    return
+
+
+  def __repr__(self):
+    L = ['%s=%r' % (key, value)
+      for key, value in self.__dict__.iteritems()]
+    return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
+
+  def __eq__(self, other):
+    return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
+
+  def __ne__(self, other):
+    return not (self == other)
+
+class timeline_user_result:
+  """
+  Attributes:
+   - success
+  """
+
+  thrift_spec = (
+    (0, TType.LIST, 'success', (TType.STRUCT,(Post, Post.thrift_spec)), None, ), # 0
+  )
+
+  def __init__(self, success=None,):
+    self.success = success
+
+  def read(self, iprot):
+    if iprot.__class__ == TBinaryProtocol.TBinaryProtocolAccelerated and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None and fastbinary is not None:
+      fastbinary.decode_binary(self, iprot.trans, (self.__class__, self.thrift_spec))
+      return
+    iprot.readStructBegin()
+    while True:
+      (fname, ftype, fid) = iprot.readFieldBegin()
+      if ftype == TType.STOP:
+        break
+      if fid == 0:
+        if ftype == TType.LIST:
+          self.success = []
+          (_etype45, _size42) = iprot.readListBegin()
+          for _i46 in xrange(_size42):
+            _elem47 = Post()
+            _elem47.read(iprot)
+            self.success.append(_elem47)
+          iprot.readListEnd()
+        else:
+          iprot.skip(ftype)
+      else:
+        iprot.skip(ftype)
+      iprot.readFieldEnd()
+    iprot.readStructEnd()
+
+  def write(self, oprot):
+    if oprot.__class__ == TBinaryProtocol.TBinaryProtocolAccelerated and self.thrift_spec is not None and fastbinary is not None:
+      oprot.trans.write(fastbinary.encode_binary(self, (self.__class__, self.thrift_spec)))
+      return
+    oprot.writeStructBegin('timeline_user_result')
+    if self.success is not None:
+      oprot.writeFieldBegin('success', TType.LIST, 0)
+      oprot.writeListBegin(TType.STRUCT, len(self.success))
+      for iter48 in self.success:
+        iter48.write(oprot)
       oprot.writeListEnd()
       oprot.writeFieldEnd()
     oprot.writeFieldStop()

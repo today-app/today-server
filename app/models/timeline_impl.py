@@ -1,7 +1,7 @@
 # -*- coding: utf8 -*-
 import datetime
 import time
-from db import Timeline, TimelineItem
+from db import UserTimeline, TimelineItem, HomeTimeline
 
 from gen.today.ttypes import InputValidationError
 from log import Logger
@@ -156,9 +156,9 @@ class AbstractTimelineImpl(ModelImpl):
         return None
 
 
-class TimelineImpl(AbstractTimelineImpl):
+class UserTimelineImpl(AbstractTimelineImpl):
     def get_timeline_class(self):
-        return Timeline
+        return UserTimeline
 
     def get_item_class(self):
         return TimelineItem
@@ -193,7 +193,7 @@ class TimelineImpl(AbstractTimelineImpl):
         Logger.debug('undistribute 2')
 
     def _distribute_post(self, user_id, post_id, type='post'):
-        impl = TimelineImpl()
+        impl = UserTimelineImpl()
         try:
             return impl.prepend(pk=user_id, type=type, item_id=post_id)
         except Exception as e:
@@ -204,3 +204,54 @@ class TimelineImpl(AbstractTimelineImpl):
             return self.delete_by_item_id(pk=user_id, item_id=post_id)
         except Exception as e:
             Logger.debug(str(e))
+
+
+
+class HomeTimelineImpl(AbstractTimelineImpl):
+    def get_timeline_class(self):
+        return HomeTimeline
+
+    def get_item_class(self):
+        return TimelineItem
+
+    def validate(self, **kwargs):
+        return True
+
+    def all_ids(self, **kwargs):
+        """
+
+        :param id:
+        :param user_id:
+        :param max_id:
+        :param min_id:
+        :param limit:
+        :return:
+        """
+        items = self.get_items(**kwargs)
+        return [item['item_id'] for item in items]
+
+    def items(self, **kwargs):
+        return self.get_items(**kwargs)
+
+    def distribute(self, user_id, post):
+        # 작성자의 타임라인에 배포
+        self._distribute_post(user_id, post['post_id'])
+
+    def undistribute(self, user_id, target, post):
+        Logger.debug('undistribute 1')
+        # 작성자의 타임라인에서 삭제
+        self._undistribute_post(user_id, post.post_id)
+        Logger.debug('undistribute 2')
+
+    def _distribute_post(self, user_id, post_id, type='post'):
+        try:
+            return (HomeTimelineImpl()).prepend(pk=user_id, type=type, item_id=post_id)
+        except Exception as e:
+            Logger.debug(str(e))
+
+    def _undistribute_post(self, user_id, post_id):
+        try:
+            return self.delete_by_item_id(pk=user_id, item_id=post_id)
+        except Exception as e:
+            Logger.debug(str(e))
+

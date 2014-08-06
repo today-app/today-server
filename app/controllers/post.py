@@ -1,11 +1,8 @@
 # -*- coding: utf8 -*-
-import json
-from db import Connection
 
 from gen.today import ttypes
-from log import Logger
 from models.post_impl import PostImpl
-from tasks import get_user
+from utils import get_t_user
 
 
 class PostController:
@@ -72,20 +69,4 @@ class PostController:
         return ret
 
 
-def get_t_user(user_id):
-    redis = Connection().redis
 
-    key = 'user:%d' % user_id
-    user_json = redis.get(key)
-    if user_json is None:
-        user = (get_user.delay(user_id)).get()
-        redis.set(key, json.dumps(user))
-    else:
-        user = json.loads(user_json)
-
-    if user is not None:
-        t_user = ttypes.User(id=user['id'], username=user['username'])
-    else:
-        t_user = None
-
-    return t_user

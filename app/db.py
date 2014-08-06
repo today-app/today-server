@@ -4,11 +4,9 @@ from datetime import datetime
 import redis
 from mongoengine import connect, Document, IntField, DateTimeField, EmbeddedDocument, StringField, \
     EmbeddedDocumentField, ListField, BooleanField
-
 from twistar.dbobject import DBObject
 from twistar.registry import Registry
 from twisted.enterprise import adbapi
-
 from sqlalchemy import Column, Integer, DateTime, String, create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
@@ -66,7 +64,7 @@ class Post(Document):
         # try:
         # data['created_dt'] = datetime.fromtimestamp(created_dt).strftime('%Y-%m-%d %H:%M:%S.%f')
         # except Exception as e:
-        #     data['created_dt'] = '1970-01-01 00:00:00.000'
+        # data['created_dt'] = '1970-01-01 00:00:00.000'
         #
         # if 'published_dt' in data:
         #     published_dt = int(data['published_dt']['$date'] / 1000)
@@ -97,7 +95,29 @@ class TimelineItem(EmbeddedDocument):
     key = IntField()
 
 
-class Timeline(Document):
+class UserTimeline(Document):
+    user_id = IntField(required=True, unique=True)
+    items = ListField(EmbeddedDocumentField(TimelineItem))
+    created_dt = DateTimeField()
+    meta = {'allow_inheritance': True}
+
+    def to_dict(self):
+        data = json.loads(self.to_json())
+        data['id'] = str(self.id)
+
+        del data['_id']
+        del data['_cls']
+
+        created_dt = int(data['created_dt']['$date'] / 1000)
+        try:
+            data['created_dt'] = datetime.fromtimestamp(created_dt).strftime('%Y-%m-%d %H:%M:%S')
+        except Exception as e:
+            data['created_dt'] = '1970-01-01 00:00:00'
+
+        return data
+
+
+class HomeTimeline(Document):
     user_id = IntField(required=True, unique=True)
     items = ListField(EmbeddedDocumentField(TimelineItem))
     created_dt = DateTimeField()
@@ -142,4 +162,5 @@ class User(Base):
             'id': int(self.id),
             'username': self.username,
         }
+
 
