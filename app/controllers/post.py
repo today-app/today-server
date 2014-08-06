@@ -47,7 +47,7 @@ class PostController:
         for post in (PostImpl()).list():
             t_user = get_t_user(post.user_id)
             t_post = ttypes.Post(id=post.post_id, text=post.text.encode('utf-8'), user=t_user)
-            ret = ret + [t_post]
+            ret.insert(0, t_post)
         return ret
 
 

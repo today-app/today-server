@@ -5,3 +5,7 @@ class FriendController:
     def ids(self, user_id):
         impl = FriendshipImpl()
         return impl.friend_ids(user_id)
+
+    def remove(self, actor_id, target_id):
+        impl = FriendshipImpl()
+        return impl.friend_remove(actor_id, target_id)

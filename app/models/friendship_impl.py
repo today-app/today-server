@@ -69,3 +69,10 @@ class FriendshipImpl(ModelImpl):
         resp = request.delete()
         return True
 
+    def friend_remove(self, actor_id, target_id):
+        friend = Friendship.objects(actor_id=target_id, target_id=actor_id, is_accepted=True).first()
+        if friend is None:
+            raise NotFoundError()
+
+        resp = friend.delete()
+        return True
