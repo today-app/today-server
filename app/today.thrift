@@ -11,7 +11,7 @@ struct User {
 
 struct Comment {
     1: int id
-    2: int user_id
+    2: User user
     3: string text
 }
 
@@ -77,6 +77,11 @@ service TodayInternalApiService
 
     bool friendship_reject(1: int actor_id, 2: int target_id)
             throws (1: InputValidationError validation_err, 2: NotFoundError not_found_error),
+
+    // user
+
+    User users_get(1: int user_id),
+    User users_get_by_username(1: string username),
 
     // timeline
     list <Post> timeline_list(1: int actor_id),

@@ -4,7 +4,7 @@
 #
 # DO NOT EDIT UNLESS YOU ARE SURE THAT YOU KNOW WHAT YOU ARE DOING
 #
-#  options string: py:twisted
+#  options string: py
 #
 
 import sys
@@ -39,7 +39,6 @@ if len(sys.argv) <= 1 or sys.argv[1] == '--help':
   print '  bool friendship_accept(int actor_id, int target_id)'
   print '  bool friendship_reject(int actor_id, int target_id)'
   print '  User users_get(int user_id)'
-  print '  User users_get_by_username(string username)'
   print '   timeline_list(int actor_id)'
   print '  bool system_reset_fixtures()'
   print ''
@@ -188,12 +187,6 @@ elif cmd == 'users_get':
     print 'users_get requires 1 args'
     sys.exit(1)
   pp.pprint(client.users_get(eval(args[0]),))
-
-elif cmd == 'users_get_by_username':
-  if len(args) != 1:
-    print 'users_get_by_username requires 1 args'
-    sys.exit(1)
-  pp.pprint(client.users_get_by_username(args[0],))
 
 elif cmd == 'timeline_list':
   if len(args) != 1:

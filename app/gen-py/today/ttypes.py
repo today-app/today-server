@@ -93,20 +93,20 @@ class Comment:
   """
   Attributes:
    - id
-   - user
+   - user_id
    - text
   """
 
   thrift_spec = (
     None, # 0
     (1, TType.I32, 'id', None, None, ), # 1
-    (2, TType.STRUCT, 'user', (User, User.thrift_spec), None, ), # 2
+    (2, TType.I32, 'user_id', None, None, ), # 2
     (3, TType.STRING, 'text', None, None, ), # 3
   )
 
-  def __init__(self, id=None, user=None, text=None,):
+  def __init__(self, id=None, user_id=None, text=None,):
     self.id = id
-    self.user = user
+    self.user_id = user_id
     self.text = text
 
   def read(self, iprot):
@@ -124,9 +124,8 @@ class Comment:
         else:
           iprot.skip(ftype)
       elif fid == 2:
-        if ftype == TType.STRUCT:
-          self.user = User()
-          self.user.read(iprot)
+        if ftype == TType.I32:
+          self.user_id = iprot.readI32();
         else:
           iprot.skip(ftype)
       elif fid == 3:
@@ -148,9 +147,9 @@ class Comment:
       oprot.writeFieldBegin('id', TType.I32, 1)
       oprot.writeI32(self.id)
       oprot.writeFieldEnd()
-    if self.user is not None:
-      oprot.writeFieldBegin('user', TType.STRUCT, 2)
-      self.user.write(oprot)
+    if self.user_id is not None:
+      oprot.writeFieldBegin('user_id', TType.I32, 2)
+      oprot.writeI32(self.user_id)
       oprot.writeFieldEnd()
     if self.text is not None:
       oprot.writeFieldBegin('text', TType.STRING, 3)

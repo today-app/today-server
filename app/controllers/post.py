@@ -1,7 +1,11 @@
 # -*- coding: utf8 -*-
+import json
+from db import Connection
 
 from gen.today import ttypes
+from log import Logger
 from models.post_impl import PostImpl
+from tasks import get_user
 
 
 class PostController:
@@ -21,6 +25,7 @@ class PostController:
 
         return (PostImpl()).create(user_id, text)
 
+
     def get(self, user_id, post_id):
         """
         Post<post_id>의 상세정보 조회
@@ -30,7 +35,9 @@ class PostController:
         :type text: str
         """
         post = (PostImpl()).get(user_id=user_id, post_id=post_id)
-        return ttypes.Post(id=post.post_id, text=post.text.encode('utf-8'))
+        t_user = get_t_user(post.user_id)
+
+        return ttypes.Post(id=post.post_id, text=post.text.encode('utf-8'), user=t_user)
 
     def list(self, user_id):
         """
@@ -41,11 +48,11 @@ class PostController:
 
         ret = []
         for post in (PostImpl()).list():
-            t_user = ttypes.User(id=1, username='foo')
+            t_user = get_t_user(post.user_id)
             t_post = ttypes.Post(id=post.post_id, text=post.text.encode('utf-8'), user=t_user)
             ret = ret + [t_post]
-
         return ret
+
 
     def delete(self, user_id, post_id):
         return (PostImpl()).delete(user_id, post_id)
@@ -58,8 +65,27 @@ class PostController:
         ret = []
         comments = (PostImpl()).comment_list(post_id)
         for comment in comments:
-            t_comment = ttypes.Comment(user_id=comment.user_id, text=comment.text.encode('utf-8'))
+            t_user = get_t_user(comment.user_id)
+            t_comment = ttypes.Comment(user=t_user, text=comment.text.encode('utf-8'))
             ret = ret + [t_comment]
 
         return ret
 
+
+def get_t_user(user_id):
+    redis = Connection().redis
+
+    key = 'user:%d' % user_id
+    user_json = redis.get(key)
+    if user_json is None:
+        user = (get_user.delay(user_id)).get()
+        redis.set(key, json.dumps(user))
+    else:
+        user = json.loads(user_json)
+
+    if user is not None:
+        t_user = ttypes.User(id=user['id'], username=user['username'])
+    else:
+        t_user = None
+
+    return t_user

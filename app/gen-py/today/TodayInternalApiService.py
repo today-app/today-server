@@ -3,7 +3,7 @@
 #
 # DO NOT EDIT UNLESS YOU ARE SURE THAT YOU KNOW WHAT YOU ARE DOING
 #
-#  options string: py:twisted
+#  options string: py
 #
 
 from thrift.Thrift import TType, TMessageType, TException, TApplicationException
@@ -16,197 +16,15 @@ try:
 except:
   fastbinary = None
 
-from zope.interface import Interface, implements
-from twisted.internet import defer
-from thrift.transport import TTwisted
 
-class Iface(Interface):
-  def post_create(user_id, text):
-    """
-    Parameters:
-     - user_id
-     - text
-    """
-    pass
-
-  def post_get(user_id, post_id):
-    """
-    Parameters:
-     - user_id
-     - post_id
-    """
-    pass
-
-  def post_list(user_id):
-    """
-    Parameters:
-     - user_id
-    """
-    pass
-
-  def post_delete(user_id, post_id):
-    """
-    Parameters:
-     - user_id
-     - post_id
-    """
-    pass
-
-  def post_comment_create(user_id, post_id, text):
-    """
-    Parameters:
-     - user_id
-     - post_id
-     - text
-    """
-    pass
-
-  def post_comment_list(user_id, post_id):
-    """
-    Parameters:
-     - user_id
-     - post_id
-    """
-    pass
-
-  def post_comment_delete(user_id, post_id, comment_id):
-    """
-    Parameters:
-     - user_id
-     - post_id
-     - comment_id
-    """
-    pass
-
-  def friend_ids(user_id):
-    """
-    Parameters:
-     - user_id
-    """
-    pass
-
-  def friend_remove(actor_id, target_id):
-    """
-    Parameters:
-     - actor_id
-     - target_id
-    """
-    pass
-
-  def friendship_incoming(user_id):
-    """
-    Parameters:
-     - user_id
-    """
-    pass
-
-  def friendship_outgoing(user_id):
-    """
-    Parameters:
-     - user_id
-    """
-    pass
-
-  def friendship_create(actor_id, target_id):
-    """
-    Parameters:
-     - actor_id
-     - target_id
-    """
-    pass
-
-  def friendship_cancel(actor_id, target_id):
-    """
-    Parameters:
-     - actor_id
-     - target_id
-    """
-    pass
-
-  def friendship_accept(actor_id, target_id):
-    """
-    Parameters:
-     - actor_id
-     - target_id
-    """
-    pass
-
-  def friendship_reject(actor_id, target_id):
-    """
-    Parameters:
-     - actor_id
-     - target_id
-    """
-    pass
-
-  def users_get(user_id):
-    """
-    Parameters:
-     - user_id
-    """
-    pass
-
-  def users_get_by_username(username):
-    """
-    Parameters:
-     - username
-    """
-    pass
-
-  def timeline_list(actor_id):
-    """
-    Parameters:
-     - actor_id
-    """
-    pass
-
-  def system_reset_fixtures():
-    pass
-
-
-class Client:
-  implements(Iface)
-
-  def __init__(self, transport, oprot_factory):
-    self._transport = transport
-    self._oprot_factory = oprot_factory
-    self._seqid = 0
-    self._reqs = {}
-
+class Iface:
   def post_create(self, user_id, text):
     """
     Parameters:
      - user_id
      - text
     """
-    self._seqid += 1
-    d = self._reqs[self._seqid] = defer.Deferred()
-    self.send_post_create(user_id, text)
-    return d
-
-  def send_post_create(self, user_id, text):
-    oprot = self._oprot_factory.getProtocol(self._transport)
-    oprot.writeMessageBegin('post_create', TMessageType.CALL, self._seqid)
-    args = post_create_args()
-    args.user_id = user_id
-    args.text = text
-    args.write(oprot)
-    oprot.writeMessageEnd()
-    oprot.trans.flush()
-
-  def recv_post_create(self, iprot, mtype, rseqid):
-    d = self._reqs.pop(rseqid)
-    if mtype == TMessageType.EXCEPTION:
-      x = TApplicationException()
-      x.read(iprot)
-      iprot.readMessageEnd()
-      return d.errback(x)
-    result = post_create_result()
-    result.read(iprot)
-    iprot.readMessageEnd()
-    if result.success is not None:
-      return d.callback(result.success)
-    return d.errback(TApplicationException(TApplicationException.MISSING_RESULT, "post_create failed: unknown result"))
+    pass
 
   def post_get(self, user_id, post_id):
     """
@@ -214,67 +32,14 @@ class Client:
      - user_id
      - post_id
     """
-    self._seqid += 1
-    d = self._reqs[self._seqid] = defer.Deferred()
-    self.send_post_get(user_id, post_id)
-    return d
-
-  def send_post_get(self, user_id, post_id):
-    oprot = self._oprot_factory.getProtocol(self._transport)
-    oprot.writeMessageBegin('post_get', TMessageType.CALL, self._seqid)
-    args = post_get_args()
-    args.user_id = user_id
-    args.post_id = post_id
-    args.write(oprot)
-    oprot.writeMessageEnd()
-    oprot.trans.flush()
-
-  def recv_post_get(self, iprot, mtype, rseqid):
-    d = self._reqs.pop(rseqid)
-    if mtype == TMessageType.EXCEPTION:
-      x = TApplicationException()
-      x.read(iprot)
-      iprot.readMessageEnd()
-      return d.errback(x)
-    result = post_get_result()
-    result.read(iprot)
-    iprot.readMessageEnd()
-    if result.success is not None:
-      return d.callback(result.success)
-    return d.errback(TApplicationException(TApplicationException.MISSING_RESULT, "post_get failed: unknown result"))
+    pass
 
   def post_list(self, user_id):
     """
     Parameters:
      - user_id
     """
-    self._seqid += 1
-    d = self._reqs[self._seqid] = defer.Deferred()
-    self.send_post_list(user_id)
-    return d
-
-  def send_post_list(self, user_id):
-    oprot = self._oprot_factory.getProtocol(self._transport)
-    oprot.writeMessageBegin('post_list', TMessageType.CALL, self._seqid)
-    args = post_list_args()
-    args.user_id = user_id
-    args.write(oprot)
-    oprot.writeMessageEnd()
-    oprot.trans.flush()
-
-  def recv_post_list(self, iprot, mtype, rseqid):
-    d = self._reqs.pop(rseqid)
-    if mtype == TMessageType.EXCEPTION:
-      x = TApplicationException()
-      x.read(iprot)
-      iprot.readMessageEnd()
-      return d.errback(x)
-    result = post_list_result()
-    result.read(iprot)
-    iprot.readMessageEnd()
-    if result.success is not None:
-      return d.callback(result.success)
-    return d.errback(TApplicationException(TApplicationException.MISSING_RESULT, "post_list failed: unknown result"))
+    pass
 
   def post_delete(self, user_id, post_id):
     """
@@ -282,36 +47,7 @@ class Client:
      - user_id
      - post_id
     """
-    self._seqid += 1
-    d = self._reqs[self._seqid] = defer.Deferred()
-    self.send_post_delete(user_id, post_id)
-    return d
-
-  def send_post_delete(self, user_id, post_id):
-    oprot = self._oprot_factory.getProtocol(self._transport)
-    oprot.writeMessageBegin('post_delete', TMessageType.CALL, self._seqid)
-    args = post_delete_args()
-    args.user_id = user_id
-    args.post_id = post_id
-    args.write(oprot)
-    oprot.writeMessageEnd()
-    oprot.trans.flush()
-
-  def recv_post_delete(self, iprot, mtype, rseqid):
-    d = self._reqs.pop(rseqid)
-    if mtype == TMessageType.EXCEPTION:
-      x = TApplicationException()
-      x.read(iprot)
-      iprot.readMessageEnd()
-      return d.errback(x)
-    result = post_delete_result()
-    result.read(iprot)
-    iprot.readMessageEnd()
-    if result.success is not None:
-      return d.callback(result.success)
-    if result.not_found_error is not None:
-      return d.errback(result.not_found_error)
-    return d.errback(TApplicationException(TApplicationException.MISSING_RESULT, "post_delete failed: unknown result"))
+    pass
 
   def post_comment_create(self, user_id, post_id, text):
     """
@@ -320,35 +56,7 @@ class Client:
      - post_id
      - text
     """
-    self._seqid += 1
-    d = self._reqs[self._seqid] = defer.Deferred()
-    self.send_post_comment_create(user_id, post_id, text)
-    return d
-
-  def send_post_comment_create(self, user_id, post_id, text):
-    oprot = self._oprot_factory.getProtocol(self._transport)
-    oprot.writeMessageBegin('post_comment_create', TMessageType.CALL, self._seqid)
-    args = post_comment_create_args()
-    args.user_id = user_id
-    args.post_id = post_id
-    args.text = text
-    args.write(oprot)
-    oprot.writeMessageEnd()
-    oprot.trans.flush()
-
-  def recv_post_comment_create(self, iprot, mtype, rseqid):
-    d = self._reqs.pop(rseqid)
-    if mtype == TMessageType.EXCEPTION:
-      x = TApplicationException()
-      x.read(iprot)
-      iprot.readMessageEnd()
-      return d.errback(x)
-    result = post_comment_create_result()
-    result.read(iprot)
-    iprot.readMessageEnd()
-    if result.success is not None:
-      return d.callback(result.success)
-    return d.errback(TApplicationException(TApplicationException.MISSING_RESULT, "post_comment_create failed: unknown result"))
+    pass
 
   def post_comment_list(self, user_id, post_id):
     """
@@ -356,34 +64,7 @@ class Client:
      - user_id
      - post_id
     """
-    self._seqid += 1
-    d = self._reqs[self._seqid] = defer.Deferred()
-    self.send_post_comment_list(user_id, post_id)
-    return d
-
-  def send_post_comment_list(self, user_id, post_id):
-    oprot = self._oprot_factory.getProtocol(self._transport)
-    oprot.writeMessageBegin('post_comment_list', TMessageType.CALL, self._seqid)
-    args = post_comment_list_args()
-    args.user_id = user_id
-    args.post_id = post_id
-    args.write(oprot)
-    oprot.writeMessageEnd()
-    oprot.trans.flush()
-
-  def recv_post_comment_list(self, iprot, mtype, rseqid):
-    d = self._reqs.pop(rseqid)
-    if mtype == TMessageType.EXCEPTION:
-      x = TApplicationException()
-      x.read(iprot)
-      iprot.readMessageEnd()
-      return d.errback(x)
-    result = post_comment_list_result()
-    result.read(iprot)
-    iprot.readMessageEnd()
-    if result.success is not None:
-      return d.callback(result.success)
-    return d.errback(TApplicationException(TApplicationException.MISSING_RESULT, "post_comment_list failed: unknown result"))
+    pass
 
   def post_comment_delete(self, user_id, post_id, comment_id):
     """
@@ -392,68 +73,14 @@ class Client:
      - post_id
      - comment_id
     """
-    self._seqid += 1
-    d = self._reqs[self._seqid] = defer.Deferred()
-    self.send_post_comment_delete(user_id, post_id, comment_id)
-    return d
-
-  def send_post_comment_delete(self, user_id, post_id, comment_id):
-    oprot = self._oprot_factory.getProtocol(self._transport)
-    oprot.writeMessageBegin('post_comment_delete', TMessageType.CALL, self._seqid)
-    args = post_comment_delete_args()
-    args.user_id = user_id
-    args.post_id = post_id
-    args.comment_id = comment_id
-    args.write(oprot)
-    oprot.writeMessageEnd()
-    oprot.trans.flush()
-
-  def recv_post_comment_delete(self, iprot, mtype, rseqid):
-    d = self._reqs.pop(rseqid)
-    if mtype == TMessageType.EXCEPTION:
-      x = TApplicationException()
-      x.read(iprot)
-      iprot.readMessageEnd()
-      return d.errback(x)
-    result = post_comment_delete_result()
-    result.read(iprot)
-    iprot.readMessageEnd()
-    if result.success is not None:
-      return d.callback(result.success)
-    return d.errback(TApplicationException(TApplicationException.MISSING_RESULT, "post_comment_delete failed: unknown result"))
+    pass
 
   def friend_ids(self, user_id):
     """
     Parameters:
      - user_id
     """
-    self._seqid += 1
-    d = self._reqs[self._seqid] = defer.Deferred()
-    self.send_friend_ids(user_id)
-    return d
-
-  def send_friend_ids(self, user_id):
-    oprot = self._oprot_factory.getProtocol(self._transport)
-    oprot.writeMessageBegin('friend_ids', TMessageType.CALL, self._seqid)
-    args = friend_ids_args()
-    args.user_id = user_id
-    args.write(oprot)
-    oprot.writeMessageEnd()
-    oprot.trans.flush()
-
-  def recv_friend_ids(self, iprot, mtype, rseqid):
-    d = self._reqs.pop(rseqid)
-    if mtype == TMessageType.EXCEPTION:
-      x = TApplicationException()
-      x.read(iprot)
-      iprot.readMessageEnd()
-      return d.errback(x)
-    result = friend_ids_result()
-    result.read(iprot)
-    iprot.readMessageEnd()
-    if result.success is not None:
-      return d.callback(result.success)
-    return d.errback(TApplicationException(TApplicationException.MISSING_RESULT, "friend_ids failed: unknown result"))
+    pass
 
   def friend_remove(self, actor_id, target_id):
     """
@@ -461,100 +88,21 @@ class Client:
      - actor_id
      - target_id
     """
-    self._seqid += 1
-    d = self._reqs[self._seqid] = defer.Deferred()
-    self.send_friend_remove(actor_id, target_id)
-    return d
-
-  def send_friend_remove(self, actor_id, target_id):
-    oprot = self._oprot_factory.getProtocol(self._transport)
-    oprot.writeMessageBegin('friend_remove', TMessageType.CALL, self._seqid)
-    args = friend_remove_args()
-    args.actor_id = actor_id
-    args.target_id = target_id
-    args.write(oprot)
-    oprot.writeMessageEnd()
-    oprot.trans.flush()
-
-  def recv_friend_remove(self, iprot, mtype, rseqid):
-    d = self._reqs.pop(rseqid)
-    if mtype == TMessageType.EXCEPTION:
-      x = TApplicationException()
-      x.read(iprot)
-      iprot.readMessageEnd()
-      return d.errback(x)
-    result = friend_remove_result()
-    result.read(iprot)
-    iprot.readMessageEnd()
-    if result.success is not None:
-      return d.callback(result.success)
-    return d.errback(TApplicationException(TApplicationException.MISSING_RESULT, "friend_remove failed: unknown result"))
+    pass
 
   def friendship_incoming(self, user_id):
     """
     Parameters:
      - user_id
     """
-    self._seqid += 1
-    d = self._reqs[self._seqid] = defer.Deferred()
-    self.send_friendship_incoming(user_id)
-    return d
-
-  def send_friendship_incoming(self, user_id):
-    oprot = self._oprot_factory.getProtocol(self._transport)
-    oprot.writeMessageBegin('friendship_incoming', TMessageType.CALL, self._seqid)
-    args = friendship_incoming_args()
-    args.user_id = user_id
-    args.write(oprot)
-    oprot.writeMessageEnd()
-    oprot.trans.flush()
-
-  def recv_friendship_incoming(self, iprot, mtype, rseqid):
-    d = self._reqs.pop(rseqid)
-    if mtype == TMessageType.EXCEPTION:
-      x = TApplicationException()
-      x.read(iprot)
-      iprot.readMessageEnd()
-      return d.errback(x)
-    result = friendship_incoming_result()
-    result.read(iprot)
-    iprot.readMessageEnd()
-    if result.success is not None:
-      return d.callback(result.success)
-    return d.errback(TApplicationException(TApplicationException.MISSING_RESULT, "friendship_incoming failed: unknown result"))
+    pass
 
   def friendship_outgoing(self, user_id):
     """
     Parameters:
      - user_id
     """
-    self._seqid += 1
-    d = self._reqs[self._seqid] = defer.Deferred()
-    self.send_friendship_outgoing(user_id)
-    return d
-
-  def send_friendship_outgoing(self, user_id):
-    oprot = self._oprot_factory.getProtocol(self._transport)
-    oprot.writeMessageBegin('friendship_outgoing', TMessageType.CALL, self._seqid)
-    args = friendship_outgoing_args()
-    args.user_id = user_id
-    args.write(oprot)
-    oprot.writeMessageEnd()
-    oprot.trans.flush()
-
-  def recv_friendship_outgoing(self, iprot, mtype, rseqid):
-    d = self._reqs.pop(rseqid)
-    if mtype == TMessageType.EXCEPTION:
-      x = TApplicationException()
-      x.read(iprot)
-      iprot.readMessageEnd()
-      return d.errback(x)
-    result = friendship_outgoing_result()
-    result.read(iprot)
-    iprot.readMessageEnd()
-    if result.success is not None:
-      return d.callback(result.success)
-    return d.errback(TApplicationException(TApplicationException.MISSING_RESULT, "friendship_outgoing failed: unknown result"))
+    pass
 
   def friendship_create(self, actor_id, target_id):
     """
@@ -562,38 +110,7 @@ class Client:
      - actor_id
      - target_id
     """
-    self._seqid += 1
-    d = self._reqs[self._seqid] = defer.Deferred()
-    self.send_friendship_create(actor_id, target_id)
-    return d
-
-  def send_friendship_create(self, actor_id, target_id):
-    oprot = self._oprot_factory.getProtocol(self._transport)
-    oprot.writeMessageBegin('friendship_create', TMessageType.CALL, self._seqid)
-    args = friendship_create_args()
-    args.actor_id = actor_id
-    args.target_id = target_id
-    args.write(oprot)
-    oprot.writeMessageEnd()
-    oprot.trans.flush()
-
-  def recv_friendship_create(self, iprot, mtype, rseqid):
-    d = self._reqs.pop(rseqid)
-    if mtype == TMessageType.EXCEPTION:
-      x = TApplicationException()
-      x.read(iprot)
-      iprot.readMessageEnd()
-      return d.errback(x)
-    result = friendship_create_result()
-    result.read(iprot)
-    iprot.readMessageEnd()
-    if result.success is not None:
-      return d.callback(result.success)
-    if result.validation_err is not None:
-      return d.errback(result.validation_err)
-    if result.already_exists_err is not None:
-      return d.errback(result.already_exists_err)
-    return d.errback(TApplicationException(TApplicationException.MISSING_RESULT, "friendship_create failed: unknown result"))
+    pass
 
   def friendship_cancel(self, actor_id, target_id):
     """
@@ -601,38 +118,7 @@ class Client:
      - actor_id
      - target_id
     """
-    self._seqid += 1
-    d = self._reqs[self._seqid] = defer.Deferred()
-    self.send_friendship_cancel(actor_id, target_id)
-    return d
-
-  def send_friendship_cancel(self, actor_id, target_id):
-    oprot = self._oprot_factory.getProtocol(self._transport)
-    oprot.writeMessageBegin('friendship_cancel', TMessageType.CALL, self._seqid)
-    args = friendship_cancel_args()
-    args.actor_id = actor_id
-    args.target_id = target_id
-    args.write(oprot)
-    oprot.writeMessageEnd()
-    oprot.trans.flush()
-
-  def recv_friendship_cancel(self, iprot, mtype, rseqid):
-    d = self._reqs.pop(rseqid)
-    if mtype == TMessageType.EXCEPTION:
-      x = TApplicationException()
-      x.read(iprot)
-      iprot.readMessageEnd()
-      return d.errback(x)
-    result = friendship_cancel_result()
-    result.read(iprot)
-    iprot.readMessageEnd()
-    if result.success is not None:
-      return d.callback(result.success)
-    if result.invalid_request is not None:
-      return d.errback(result.invalid_request)
-    if result.not_found_error is not None:
-      return d.errback(result.not_found_error)
-    return d.errback(TApplicationException(TApplicationException.MISSING_RESULT, "friendship_cancel failed: unknown result"))
+    pass
 
   def friendship_accept(self, actor_id, target_id):
     """
@@ -640,38 +126,7 @@ class Client:
      - actor_id
      - target_id
     """
-    self._seqid += 1
-    d = self._reqs[self._seqid] = defer.Deferred()
-    self.send_friendship_accept(actor_id, target_id)
-    return d
-
-  def send_friendship_accept(self, actor_id, target_id):
-    oprot = self._oprot_factory.getProtocol(self._transport)
-    oprot.writeMessageBegin('friendship_accept', TMessageType.CALL, self._seqid)
-    args = friendship_accept_args()
-    args.actor_id = actor_id
-    args.target_id = target_id
-    args.write(oprot)
-    oprot.writeMessageEnd()
-    oprot.trans.flush()
-
-  def recv_friendship_accept(self, iprot, mtype, rseqid):
-    d = self._reqs.pop(rseqid)
-    if mtype == TMessageType.EXCEPTION:
-      x = TApplicationException()
-      x.read(iprot)
-      iprot.readMessageEnd()
-      return d.errback(x)
-    result = friendship_accept_result()
-    result.read(iprot)
-    iprot.readMessageEnd()
-    if result.success is not None:
-      return d.callback(result.success)
-    if result.validation_err is not None:
-      return d.errback(result.validation_err)
-    if result.not_found_error is not None:
-      return d.errback(result.not_found_error)
-    return d.errback(TApplicationException(TApplicationException.MISSING_RESULT, "friendship_accept failed: unknown result"))
+    pass
 
   def friendship_reject(self, actor_id, target_id):
     """
@@ -679,172 +134,616 @@ class Client:
      - actor_id
      - target_id
     """
-    self._seqid += 1
-    d = self._reqs[self._seqid] = defer.Deferred()
-    self.send_friendship_reject(actor_id, target_id)
-    return d
-
-  def send_friendship_reject(self, actor_id, target_id):
-    oprot = self._oprot_factory.getProtocol(self._transport)
-    oprot.writeMessageBegin('friendship_reject', TMessageType.CALL, self._seqid)
-    args = friendship_reject_args()
-    args.actor_id = actor_id
-    args.target_id = target_id
-    args.write(oprot)
-    oprot.writeMessageEnd()
-    oprot.trans.flush()
-
-  def recv_friendship_reject(self, iprot, mtype, rseqid):
-    d = self._reqs.pop(rseqid)
-    if mtype == TMessageType.EXCEPTION:
-      x = TApplicationException()
-      x.read(iprot)
-      iprot.readMessageEnd()
-      return d.errback(x)
-    result = friendship_reject_result()
-    result.read(iprot)
-    iprot.readMessageEnd()
-    if result.success is not None:
-      return d.callback(result.success)
-    if result.validation_err is not None:
-      return d.errback(result.validation_err)
-    if result.not_found_error is not None:
-      return d.errback(result.not_found_error)
-    return d.errback(TApplicationException(TApplicationException.MISSING_RESULT, "friendship_reject failed: unknown result"))
+    pass
 
   def users_get(self, user_id):
     """
     Parameters:
      - user_id
     """
-    self._seqid += 1
-    d = self._reqs[self._seqid] = defer.Deferred()
-    self.send_users_get(user_id)
-    return d
-
-  def send_users_get(self, user_id):
-    oprot = self._oprot_factory.getProtocol(self._transport)
-    oprot.writeMessageBegin('users_get', TMessageType.CALL, self._seqid)
-    args = users_get_args()
-    args.user_id = user_id
-    args.write(oprot)
-    oprot.writeMessageEnd()
-    oprot.trans.flush()
-
-  def recv_users_get(self, iprot, mtype, rseqid):
-    d = self._reqs.pop(rseqid)
-    if mtype == TMessageType.EXCEPTION:
-      x = TApplicationException()
-      x.read(iprot)
-      iprot.readMessageEnd()
-      return d.errback(x)
-    result = users_get_result()
-    result.read(iprot)
-    iprot.readMessageEnd()
-    if result.success is not None:
-      return d.callback(result.success)
-    return d.errback(TApplicationException(TApplicationException.MISSING_RESULT, "users_get failed: unknown result"))
-
-  def users_get_by_username(self, username):
-    """
-    Parameters:
-     - username
-    """
-    self._seqid += 1
-    d = self._reqs[self._seqid] = defer.Deferred()
-    self.send_users_get_by_username(username)
-    return d
-
-  def send_users_get_by_username(self, username):
-    oprot = self._oprot_factory.getProtocol(self._transport)
-    oprot.writeMessageBegin('users_get_by_username', TMessageType.CALL, self._seqid)
-    args = users_get_by_username_args()
-    args.username = username
-    args.write(oprot)
-    oprot.writeMessageEnd()
-    oprot.trans.flush()
-
-  def recv_users_get_by_username(self, iprot, mtype, rseqid):
-    d = self._reqs.pop(rseqid)
-    if mtype == TMessageType.EXCEPTION:
-      x = TApplicationException()
-      x.read(iprot)
-      iprot.readMessageEnd()
-      return d.errback(x)
-    result = users_get_by_username_result()
-    result.read(iprot)
-    iprot.readMessageEnd()
-    if result.success is not None:
-      return d.callback(result.success)
-    return d.errback(TApplicationException(TApplicationException.MISSING_RESULT, "users_get_by_username failed: unknown result"))
+    pass
 
   def timeline_list(self, actor_id):
     """
     Parameters:
      - actor_id
     """
-    self._seqid += 1
-    d = self._reqs[self._seqid] = defer.Deferred()
-    self.send_timeline_list(actor_id)
-    return d
-
-  def send_timeline_list(self, actor_id):
-    oprot = self._oprot_factory.getProtocol(self._transport)
-    oprot.writeMessageBegin('timeline_list', TMessageType.CALL, self._seqid)
-    args = timeline_list_args()
-    args.actor_id = actor_id
-    args.write(oprot)
-    oprot.writeMessageEnd()
-    oprot.trans.flush()
-
-  def recv_timeline_list(self, iprot, mtype, rseqid):
-    d = self._reqs.pop(rseqid)
-    if mtype == TMessageType.EXCEPTION:
-      x = TApplicationException()
-      x.read(iprot)
-      iprot.readMessageEnd()
-      return d.errback(x)
-    result = timeline_list_result()
-    result.read(iprot)
-    iprot.readMessageEnd()
-    if result.success is not None:
-      return d.callback(result.success)
-    return d.errback(TApplicationException(TApplicationException.MISSING_RESULT, "timeline_list failed: unknown result"))
+    pass
 
   def system_reset_fixtures(self):
-    self._seqid += 1
-    d = self._reqs[self._seqid] = defer.Deferred()
-    self.send_system_reset_fixtures()
-    return d
+    pass
 
-  def send_system_reset_fixtures(self):
-    oprot = self._oprot_factory.getProtocol(self._transport)
-    oprot.writeMessageBegin('system_reset_fixtures', TMessageType.CALL, self._seqid)
-    args = system_reset_fixtures_args()
-    args.write(oprot)
-    oprot.writeMessageEnd()
-    oprot.trans.flush()
 
-  def recv_system_reset_fixtures(self, iprot, mtype, rseqid):
-    d = self._reqs.pop(rseqid)
+class Client(Iface):
+  def __init__(self, iprot, oprot=None):
+    self._iprot = self._oprot = iprot
+    if oprot is not None:
+      self._oprot = oprot
+    self._seqid = 0
+
+  def post_create(self, user_id, text):
+    """
+    Parameters:
+     - user_id
+     - text
+    """
+    self.send_post_create(user_id, text)
+    return self.recv_post_create()
+
+  def send_post_create(self, user_id, text):
+    self._oprot.writeMessageBegin('post_create', TMessageType.CALL, self._seqid)
+    args = post_create_args()
+    args.user_id = user_id
+    args.text = text
+    args.write(self._oprot)
+    self._oprot.writeMessageEnd()
+    self._oprot.trans.flush()
+
+  def recv_post_create(self):
+    (fname, mtype, rseqid) = self._iprot.readMessageBegin()
     if mtype == TMessageType.EXCEPTION:
       x = TApplicationException()
-      x.read(iprot)
-      iprot.readMessageEnd()
-      return d.errback(x)
-    result = system_reset_fixtures_result()
-    result.read(iprot)
-    iprot.readMessageEnd()
+      x.read(self._iprot)
+      self._iprot.readMessageEnd()
+      raise x
+    result = post_create_result()
+    result.read(self._iprot)
+    self._iprot.readMessageEnd()
     if result.success is not None:
-      return d.callback(result.success)
-    return d.errback(TApplicationException(TApplicationException.MISSING_RESULT, "system_reset_fixtures failed: unknown result"))
+      return result.success
+    raise TApplicationException(TApplicationException.MISSING_RESULT, "post_create failed: unknown result");
+
+  def post_get(self, user_id, post_id):
+    """
+    Parameters:
+     - user_id
+     - post_id
+    """
+    self.send_post_get(user_id, post_id)
+    return self.recv_post_get()
+
+  def send_post_get(self, user_id, post_id):
+    self._oprot.writeMessageBegin('post_get', TMessageType.CALL, self._seqid)
+    args = post_get_args()
+    args.user_id = user_id
+    args.post_id = post_id
+    args.write(self._oprot)
+    self._oprot.writeMessageEnd()
+    self._oprot.trans.flush()
+
+  def recv_post_get(self):
+    (fname, mtype, rseqid) = self._iprot.readMessageBegin()
+    if mtype == TMessageType.EXCEPTION:
+      x = TApplicationException()
+      x.read(self._iprot)
+      self._iprot.readMessageEnd()
+      raise x
+    result = post_get_result()
+    result.read(self._iprot)
+    self._iprot.readMessageEnd()
+    if result.success is not None:
+      return result.success
+    raise TApplicationException(TApplicationException.MISSING_RESULT, "post_get failed: unknown result");
+
+  def post_list(self, user_id):
+    """
+    Parameters:
+     - user_id
+    """
+    self.send_post_list(user_id)
+    return self.recv_post_list()
+
+  def send_post_list(self, user_id):
+    self._oprot.writeMessageBegin('post_list', TMessageType.CALL, self._seqid)
+    args = post_list_args()
+    args.user_id = user_id
+    args.write(self._oprot)
+    self._oprot.writeMessageEnd()
+    self._oprot.trans.flush()
+
+  def recv_post_list(self):
+    (fname, mtype, rseqid) = self._iprot.readMessageBegin()
+    if mtype == TMessageType.EXCEPTION:
+      x = TApplicationException()
+      x.read(self._iprot)
+      self._iprot.readMessageEnd()
+      raise x
+    result = post_list_result()
+    result.read(self._iprot)
+    self._iprot.readMessageEnd()
+    if result.success is not None:
+      return result.success
+    raise TApplicationException(TApplicationException.MISSING_RESULT, "post_list failed: unknown result");
+
+  def post_delete(self, user_id, post_id):
+    """
+    Parameters:
+     - user_id
+     - post_id
+    """
+    self.send_post_delete(user_id, post_id)
+    return self.recv_post_delete()
+
+  def send_post_delete(self, user_id, post_id):
+    self._oprot.writeMessageBegin('post_delete', TMessageType.CALL, self._seqid)
+    args = post_delete_args()
+    args.user_id = user_id
+    args.post_id = post_id
+    args.write(self._oprot)
+    self._oprot.writeMessageEnd()
+    self._oprot.trans.flush()
+
+  def recv_post_delete(self):
+    (fname, mtype, rseqid) = self._iprot.readMessageBegin()
+    if mtype == TMessageType.EXCEPTION:
+      x = TApplicationException()
+      x.read(self._iprot)
+      self._iprot.readMessageEnd()
+      raise x
+    result = post_delete_result()
+    result.read(self._iprot)
+    self._iprot.readMessageEnd()
+    if result.success is not None:
+      return result.success
+    if result.not_found_error is not None:
+      raise result.not_found_error
+    raise TApplicationException(TApplicationException.MISSING_RESULT, "post_delete failed: unknown result");
+
+  def post_comment_create(self, user_id, post_id, text):
+    """
+    Parameters:
+     - user_id
+     - post_id
+     - text
+    """
+    self.send_post_comment_create(user_id, post_id, text)
+    return self.recv_post_comment_create()
+
+  def send_post_comment_create(self, user_id, post_id, text):
+    self._oprot.writeMessageBegin('post_comment_create', TMessageType.CALL, self._seqid)
+    args = post_comment_create_args()
+    args.user_id = user_id
+    args.post_id = post_id
+    args.text = text
+    args.write(self._oprot)
+    self._oprot.writeMessageEnd()
+    self._oprot.trans.flush()
+
+  def recv_post_comment_create(self):
+    (fname, mtype, rseqid) = self._iprot.readMessageBegin()
+    if mtype == TMessageType.EXCEPTION:
+      x = TApplicationException()
+      x.read(self._iprot)
+      self._iprot.readMessageEnd()
+      raise x
+    result = post_comment_create_result()
+    result.read(self._iprot)
+    self._iprot.readMessageEnd()
+    if result.success is not None:
+      return result.success
+    raise TApplicationException(TApplicationException.MISSING_RESULT, "post_comment_create failed: unknown result");
+
+  def post_comment_list(self, user_id, post_id):
+    """
+    Parameters:
+     - user_id
+     - post_id
+    """
+    self.send_post_comment_list(user_id, post_id)
+    return self.recv_post_comment_list()
+
+  def send_post_comment_list(self, user_id, post_id):
+    self._oprot.writeMessageBegin('post_comment_list', TMessageType.CALL, self._seqid)
+    args = post_comment_list_args()
+    args.user_id = user_id
+    args.post_id = post_id
+    args.write(self._oprot)
+    self._oprot.writeMessageEnd()
+    self._oprot.trans.flush()
+
+  def recv_post_comment_list(self):
+    (fname, mtype, rseqid) = self._iprot.readMessageBegin()
+    if mtype == TMessageType.EXCEPTION:
+      x = TApplicationException()
+      x.read(self._iprot)
+      self._iprot.readMessageEnd()
+      raise x
+    result = post_comment_list_result()
+    result.read(self._iprot)
+    self._iprot.readMessageEnd()
+    if result.success is not None:
+      return result.success
+    raise TApplicationException(TApplicationException.MISSING_RESULT, "post_comment_list failed: unknown result");
+
+  def post_comment_delete(self, user_id, post_id, comment_id):
+    """
+    Parameters:
+     - user_id
+     - post_id
+     - comment_id
+    """
+    self.send_post_comment_delete(user_id, post_id, comment_id)
+    return self.recv_post_comment_delete()
+
+  def send_post_comment_delete(self, user_id, post_id, comment_id):
+    self._oprot.writeMessageBegin('post_comment_delete', TMessageType.CALL, self._seqid)
+    args = post_comment_delete_args()
+    args.user_id = user_id
+    args.post_id = post_id
+    args.comment_id = comment_id
+    args.write(self._oprot)
+    self._oprot.writeMessageEnd()
+    self._oprot.trans.flush()
+
+  def recv_post_comment_delete(self):
+    (fname, mtype, rseqid) = self._iprot.readMessageBegin()
+    if mtype == TMessageType.EXCEPTION:
+      x = TApplicationException()
+      x.read(self._iprot)
+      self._iprot.readMessageEnd()
+      raise x
+    result = post_comment_delete_result()
+    result.read(self._iprot)
+    self._iprot.readMessageEnd()
+    if result.success is not None:
+      return result.success
+    raise TApplicationException(TApplicationException.MISSING_RESULT, "post_comment_delete failed: unknown result");
+
+  def friend_ids(self, user_id):
+    """
+    Parameters:
+     - user_id
+    """
+    self.send_friend_ids(user_id)
+    return self.recv_friend_ids()
+
+  def send_friend_ids(self, user_id):
+    self._oprot.writeMessageBegin('friend_ids', TMessageType.CALL, self._seqid)
+    args = friend_ids_args()
+    args.user_id = user_id
+    args.write(self._oprot)
+    self._oprot.writeMessageEnd()
+    self._oprot.trans.flush()
+
+  def recv_friend_ids(self):
+    (fname, mtype, rseqid) = self._iprot.readMessageBegin()
+    if mtype == TMessageType.EXCEPTION:
+      x = TApplicationException()
+      x.read(self._iprot)
+      self._iprot.readMessageEnd()
+      raise x
+    result = friend_ids_result()
+    result.read(self._iprot)
+    self._iprot.readMessageEnd()
+    if result.success is not None:
+      return result.success
+    raise TApplicationException(TApplicationException.MISSING_RESULT, "friend_ids failed: unknown result");
+
+  def friend_remove(self, actor_id, target_id):
+    """
+    Parameters:
+     - actor_id
+     - target_id
+    """
+    self.send_friend_remove(actor_id, target_id)
+    return self.recv_friend_remove()
+
+  def send_friend_remove(self, actor_id, target_id):
+    self._oprot.writeMessageBegin('friend_remove', TMessageType.CALL, self._seqid)
+    args = friend_remove_args()
+    args.actor_id = actor_id
+    args.target_id = target_id
+    args.write(self._oprot)
+    self._oprot.writeMessageEnd()
+    self._oprot.trans.flush()
+
+  def recv_friend_remove(self):
+    (fname, mtype, rseqid) = self._iprot.readMessageBegin()
+    if mtype == TMessageType.EXCEPTION:
+      x = TApplicationException()
+      x.read(self._iprot)
+      self._iprot.readMessageEnd()
+      raise x
+    result = friend_remove_result()
+    result.read(self._iprot)
+    self._iprot.readMessageEnd()
+    if result.success is not None:
+      return result.success
+    raise TApplicationException(TApplicationException.MISSING_RESULT, "friend_remove failed: unknown result");
+
+  def friendship_incoming(self, user_id):
+    """
+    Parameters:
+     - user_id
+    """
+    self.send_friendship_incoming(user_id)
+    return self.recv_friendship_incoming()
+
+  def send_friendship_incoming(self, user_id):
+    self._oprot.writeMessageBegin('friendship_incoming', TMessageType.CALL, self._seqid)
+    args = friendship_incoming_args()
+    args.user_id = user_id
+    args.write(self._oprot)
+    self._oprot.writeMessageEnd()
+    self._oprot.trans.flush()
+
+  def recv_friendship_incoming(self):
+    (fname, mtype, rseqid) = self._iprot.readMessageBegin()
+    if mtype == TMessageType.EXCEPTION:
+      x = TApplicationException()
+      x.read(self._iprot)
+      self._iprot.readMessageEnd()
+      raise x
+    result = friendship_incoming_result()
+    result.read(self._iprot)
+    self._iprot.readMessageEnd()
+    if result.success is not None:
+      return result.success
+    raise TApplicationException(TApplicationException.MISSING_RESULT, "friendship_incoming failed: unknown result");
+
+  def friendship_outgoing(self, user_id):
+    """
+    Parameters:
+     - user_id
+    """
+    self.send_friendship_outgoing(user_id)
+    return self.recv_friendship_outgoing()
+
+  def send_friendship_outgoing(self, user_id):
+    self._oprot.writeMessageBegin('friendship_outgoing', TMessageType.CALL, self._seqid)
+    args = friendship_outgoing_args()
+    args.user_id = user_id
+    args.write(self._oprot)
+    self._oprot.writeMessageEnd()
+    self._oprot.trans.flush()
+
+  def recv_friendship_outgoing(self):
+    (fname, mtype, rseqid) = self._iprot.readMessageBegin()
+    if mtype == TMessageType.EXCEPTION:
+      x = TApplicationException()
+      x.read(self._iprot)
+      self._iprot.readMessageEnd()
+      raise x
+    result = friendship_outgoing_result()
+    result.read(self._iprot)
+    self._iprot.readMessageEnd()
+    if result.success is not None:
+      return result.success
+    raise TApplicationException(TApplicationException.MISSING_RESULT, "friendship_outgoing failed: unknown result");
+
+  def friendship_create(self, actor_id, target_id):
+    """
+    Parameters:
+     - actor_id
+     - target_id
+    """
+    self.send_friendship_create(actor_id, target_id)
+    return self.recv_friendship_create()
+
+  def send_friendship_create(self, actor_id, target_id):
+    self._oprot.writeMessageBegin('friendship_create', TMessageType.CALL, self._seqid)
+    args = friendship_create_args()
+    args.actor_id = actor_id
+    args.target_id = target_id
+    args.write(self._oprot)
+    self._oprot.writeMessageEnd()
+    self._oprot.trans.flush()
+
+  def recv_friendship_create(self):
+    (fname, mtype, rseqid) = self._iprot.readMessageBegin()
+    if mtype == TMessageType.EXCEPTION:
+      x = TApplicationException()
+      x.read(self._iprot)
+      self._iprot.readMessageEnd()
+      raise x
+    result = friendship_create_result()
+    result.read(self._iprot)
+    self._iprot.readMessageEnd()
+    if result.success is not None:
+      return result.success
+    if result.validation_err is not None:
+      raise result.validation_err
+    if result.already_exists_err is not None:
+      raise result.already_exists_err
+    raise TApplicationException(TApplicationException.MISSING_RESULT, "friendship_create failed: unknown result");
+
+  def friendship_cancel(self, actor_id, target_id):
+    """
+    Parameters:
+     - actor_id
+     - target_id
+    """
+    self.send_friendship_cancel(actor_id, target_id)
+    return self.recv_friendship_cancel()
+
+  def send_friendship_cancel(self, actor_id, target_id):
+    self._oprot.writeMessageBegin('friendship_cancel', TMessageType.CALL, self._seqid)
+    args = friendship_cancel_args()
+    args.actor_id = actor_id
+    args.target_id = target_id
+    args.write(self._oprot)
+    self._oprot.writeMessageEnd()
+    self._oprot.trans.flush()
+
+  def recv_friendship_cancel(self):
+    (fname, mtype, rseqid) = self._iprot.readMessageBegin()
+    if mtype == TMessageType.EXCEPTION:
+      x = TApplicationException()
+      x.read(self._iprot)
+      self._iprot.readMessageEnd()
+      raise x
+    result = friendship_cancel_result()
+    result.read(self._iprot)
+    self._iprot.readMessageEnd()
+    if result.success is not None:
+      return result.success
+    if result.invalid_request is not None:
+      raise result.invalid_request
+    if result.not_found_error is not None:
+      raise result.not_found_error
+    raise TApplicationException(TApplicationException.MISSING_RESULT, "friendship_cancel failed: unknown result");
+
+  def friendship_accept(self, actor_id, target_id):
+    """
+    Parameters:
+     - actor_id
+     - target_id
+    """
+    self.send_friendship_accept(actor_id, target_id)
+    return self.recv_friendship_accept()
+
+  def send_friendship_accept(self, actor_id, target_id):
+    self._oprot.writeMessageBegin('friendship_accept', TMessageType.CALL, self._seqid)
+    args = friendship_accept_args()
+    args.actor_id = actor_id
+    args.target_id = target_id
+    args.write(self._oprot)
+    self._oprot.writeMessageEnd()
+    self._oprot.trans.flush()
+
+  def recv_friendship_accept(self):
+    (fname, mtype, rseqid) = self._iprot.readMessageBegin()
+    if mtype == TMessageType.EXCEPTION:
+      x = TApplicationException()
+      x.read(self._iprot)
+      self._iprot.readMessageEnd()
+      raise x
+    result = friendship_accept_result()
+    result.read(self._iprot)
+    self._iprot.readMessageEnd()
+    if result.success is not None:
+      return result.success
+    if result.validation_err is not None:
+      raise result.validation_err
+    if result.not_found_error is not None:
+      raise result.not_found_error
+    raise TApplicationException(TApplicationException.MISSING_RESULT, "friendship_accept failed: unknown result");
+
+  def friendship_reject(self, actor_id, target_id):
+    """
+    Parameters:
+     - actor_id
+     - target_id
+    """
+    self.send_friendship_reject(actor_id, target_id)
+    return self.recv_friendship_reject()
+
+  def send_friendship_reject(self, actor_id, target_id):
+    self._oprot.writeMessageBegin('friendship_reject', TMessageType.CALL, self._seqid)
+    args = friendship_reject_args()
+    args.actor_id = actor_id
+    args.target_id = target_id
+    args.write(self._oprot)
+    self._oprot.writeMessageEnd()
+    self._oprot.trans.flush()
+
+  def recv_friendship_reject(self):
+    (fname, mtype, rseqid) = self._iprot.readMessageBegin()
+    if mtype == TMessageType.EXCEPTION:
+      x = TApplicationException()
+      x.read(self._iprot)
+      self._iprot.readMessageEnd()
+      raise x
+    result = friendship_reject_result()
+    result.read(self._iprot)
+    self._iprot.readMessageEnd()
+    if result.success is not None:
+      return result.success
+    if result.validation_err is not None:
+      raise result.validation_err
+    if result.not_found_error is not None:
+      raise result.not_found_error
+    raise TApplicationException(TApplicationException.MISSING_RESULT, "friendship_reject failed: unknown result");
+
+  def users_get(self, user_id):
+    """
+    Parameters:
+     - user_id
+    """
+    self.send_users_get(user_id)
+    return self.recv_users_get()
+
+  def send_users_get(self, user_id):
+    self._oprot.writeMessageBegin('users_get', TMessageType.CALL, self._seqid)
+    args = users_get_args()
+    args.user_id = user_id
+    args.write(self._oprot)
+    self._oprot.writeMessageEnd()
+    self._oprot.trans.flush()
+
+  def recv_users_get(self):
+    (fname, mtype, rseqid) = self._iprot.readMessageBegin()
+    if mtype == TMessageType.EXCEPTION:
+      x = TApplicationException()
+      x.read(self._iprot)
+      self._iprot.readMessageEnd()
+      raise x
+    result = users_get_result()
+    result.read(self._iprot)
+    self._iprot.readMessageEnd()
+    if result.success is not None:
+      return result.success
+    raise TApplicationException(TApplicationException.MISSING_RESULT, "users_get failed: unknown result");
+
+  def timeline_list(self, actor_id):
+    """
+    Parameters:
+     - actor_id
+    """
+    self.send_timeline_list(actor_id)
+    return self.recv_timeline_list()
+
+  def send_timeline_list(self, actor_id):
+    self._oprot.writeMessageBegin('timeline_list', TMessageType.CALL, self._seqid)
+    args = timeline_list_args()
+    args.actor_id = actor_id
+    args.write(self._oprot)
+    self._oprot.writeMessageEnd()
+    self._oprot.trans.flush()
+
+  def recv_timeline_list(self):
+    (fname, mtype, rseqid) = self._iprot.readMessageBegin()
+    if mtype == TMessageType.EXCEPTION:
+      x = TApplicationException()
+      x.read(self._iprot)
+      self._iprot.readMessageEnd()
+      raise x
+    result = timeline_list_result()
+    result.read(self._iprot)
+    self._iprot.readMessageEnd()
+    if result.success is not None:
+      return result.success
+    raise TApplicationException(TApplicationException.MISSING_RESULT, "timeline_list failed: unknown result");
+
+  def system_reset_fixtures(self):
+    self.send_system_reset_fixtures()
+    return self.recv_system_reset_fixtures()
+
+  def send_system_reset_fixtures(self):
+    self._oprot.writeMessageBegin('system_reset_fixtures', TMessageType.CALL, self._seqid)
+    args = system_reset_fixtures_args()
+    args.write(self._oprot)
+    self._oprot.writeMessageEnd()
+    self._oprot.trans.flush()
+
+  def recv_system_reset_fixtures(self):
+    (fname, mtype, rseqid) = self._iprot.readMessageBegin()
+    if mtype == TMessageType.EXCEPTION:
+      x = TApplicationException()
+      x.read(self._iprot)
+      self._iprot.readMessageEnd()
+      raise x
+    result = system_reset_fixtures_result()
+    result.read(self._iprot)
+    self._iprot.readMessageEnd()
+    if result.success is not None:
+      return result.success
+    raise TApplicationException(TApplicationException.MISSING_RESULT, "system_reset_fixtures failed: unknown result");
 
 
-class Processor(TProcessor):
-  implements(Iface)
-
+class Processor(Iface, TProcessor):
   def __init__(self, handler):
-    self._handler = Iface(handler)
+    self._handler = handler
     self._processMap = {}
     self._processMap["post_create"] = Processor.process_post_create
     self._processMap["post_get"] = Processor.process_post_get
@@ -862,7 +761,6 @@ class Processor(TProcessor):
     self._processMap["friendship_accept"] = Processor.process_friendship_accept
     self._processMap["friendship_reject"] = Processor.process_friendship_reject
     self._processMap["users_get"] = Processor.process_users_get
-    self._processMap["users_get_by_username"] = Processor.process_users_get_by_username
     self._processMap["timeline_list"] = Processor.process_timeline_list
     self._processMap["system_reset_fixtures"] = Processor.process_system_reset_fixtures
 
@@ -876,21 +774,17 @@ class Processor(TProcessor):
       x.write(oprot)
       oprot.writeMessageEnd()
       oprot.trans.flush()
-      return defer.succeed(None)
+      return
     else:
-      return self._processMap[name](self, seqid, iprot, oprot)
+      self._processMap[name](self, seqid, iprot, oprot)
+    return True
 
   def process_post_create(self, seqid, iprot, oprot):
     args = post_create_args()
     args.read(iprot)
     iprot.readMessageEnd()
     result = post_create_result()
-    d = defer.maybeDeferred(self._handler.post_create, args.user_id, args.text)
-    d.addCallback(self.write_results_success_post_create, result, seqid, oprot)
-    return d
-
-  def write_results_success_post_create(self, success, result, seqid, oprot):
-    result.success = success
+    result.success = self._handler.post_create(args.user_id, args.text)
     oprot.writeMessageBegin("post_create", TMessageType.REPLY, seqid)
     result.write(oprot)
     oprot.writeMessageEnd()
@@ -901,12 +795,7 @@ class Processor(TProcessor):
     args.read(iprot)
     iprot.readMessageEnd()
     result = post_get_result()
-    d = defer.maybeDeferred(self._handler.post_get, args.user_id, args.post_id)
-    d.addCallback(self.write_results_success_post_get, result, seqid, oprot)
-    return d
-
-  def write_results_success_post_get(self, success, result, seqid, oprot):
-    result.success = success
+    result.success = self._handler.post_get(args.user_id, args.post_id)
     oprot.writeMessageBegin("post_get", TMessageType.REPLY, seqid)
     result.write(oprot)
     oprot.writeMessageEnd()
@@ -917,12 +806,7 @@ class Processor(TProcessor):
     args.read(iprot)
     iprot.readMessageEnd()
     result = post_list_result()
-    d = defer.maybeDeferred(self._handler.post_list, args.user_id)
-    d.addCallback(self.write_results_success_post_list, result, seqid, oprot)
-    return d
-
-  def write_results_success_post_list(self, success, result, seqid, oprot):
-    result.success = success
+    result.success = self._handler.post_list(args.user_id)
     oprot.writeMessageBegin("post_list", TMessageType.REPLY, seqid)
     result.write(oprot)
     oprot.writeMessageEnd()
@@ -933,21 +817,8 @@ class Processor(TProcessor):
     args.read(iprot)
     iprot.readMessageEnd()
     result = post_delete_result()
-    d = defer.maybeDeferred(self._handler.post_delete, args.user_id, args.post_id)
-    d.addCallback(self.write_results_success_post_delete, result, seqid, oprot)
-    d.addErrback(self.write_results_exception_post_delete, result, seqid, oprot)
-    return d
-
-  def write_results_success_post_delete(self, success, result, seqid, oprot):
-    result.success = success
-    oprot.writeMessageBegin("post_delete", TMessageType.REPLY, seqid)
-    result.write(oprot)
-    oprot.writeMessageEnd()
-    oprot.trans.flush()
-
-  def write_results_exception_post_delete(self, error, result, seqid, oprot):
     try:
-      error.raiseException()
+      result.success = self._handler.post_delete(args.user_id, args.post_id)
     except NotFoundError, not_found_error:
       result.not_found_error = not_found_error
     oprot.writeMessageBegin("post_delete", TMessageType.REPLY, seqid)
@@ -960,12 +831,7 @@ class Processor(TProcessor):
     args.read(iprot)
     iprot.readMessageEnd()
     result = post_comment_create_result()
-    d = defer.maybeDeferred(self._handler.post_comment_create, args.user_id, args.post_id, args.text)
-    d.addCallback(self.write_results_success_post_comment_create, result, seqid, oprot)
-    return d
-
-  def write_results_success_post_comment_create(self, success, result, seqid, oprot):
-    result.success = success
+    result.success = self._handler.post_comment_create(args.user_id, args.post_id, args.text)
     oprot.writeMessageBegin("post_comment_create", TMessageType.REPLY, seqid)
     result.write(oprot)
     oprot.writeMessageEnd()
@@ -976,12 +842,7 @@ class Processor(TProcessor):
     args.read(iprot)
     iprot.readMessageEnd()
     result = post_comment_list_result()
-    d = defer.maybeDeferred(self._handler.post_comment_list, args.user_id, args.post_id)
-    d.addCallback(self.write_results_success_post_comment_list, result, seqid, oprot)
-    return d
-
-  def write_results_success_post_comment_list(self, success, result, seqid, oprot):
-    result.success = success
+    result.success = self._handler.post_comment_list(args.user_id, args.post_id)
     oprot.writeMessageBegin("post_comment_list", TMessageType.REPLY, seqid)
     result.write(oprot)
     oprot.writeMessageEnd()
@@ -992,12 +853,7 @@ class Processor(TProcessor):
     args.read(iprot)
     iprot.readMessageEnd()
     result = post_comment_delete_result()
-    d = defer.maybeDeferred(self._handler.post_comment_delete, args.user_id, args.post_id, args.comment_id)
-    d.addCallback(self.write_results_success_post_comment_delete, result, seqid, oprot)
-    return d
-
-  def write_results_success_post_comment_delete(self, success, result, seqid, oprot):
-    result.success = success
+    result.success = self._handler.post_comment_delete(args.user_id, args.post_id, args.comment_id)
     oprot.writeMessageBegin("post_comment_delete", TMessageType.REPLY, seqid)
     result.write(oprot)
     oprot.writeMessageEnd()
@@ -1008,12 +864,7 @@ class Processor(TProcessor):
     args.read(iprot)
     iprot.readMessageEnd()
     result = friend_ids_result()
-    d = defer.maybeDeferred(self._handler.friend_ids, args.user_id)
-    d.addCallback(self.write_results_success_friend_ids, result, seqid, oprot)
-    return d
-
-  def write_results_success_friend_ids(self, success, result, seqid, oprot):
-    result.success = success
+    result.success = self._handler.friend_ids(args.user_id)
     oprot.writeMessageBegin("friend_ids", TMessageType.REPLY, seqid)
     result.write(oprot)
     oprot.writeMessageEnd()
@@ -1024,12 +875,7 @@ class Processor(TProcessor):
     args.read(iprot)
     iprot.readMessageEnd()
     result = friend_remove_result()
-    d = defer.maybeDeferred(self._handler.friend_remove, args.actor_id, args.target_id)
-    d.addCallback(self.write_results_success_friend_remove, result, seqid, oprot)
-    return d
-
-  def write_results_success_friend_remove(self, success, result, seqid, oprot):
-    result.success = success
+    result.success = self._handler.friend_remove(args.actor_id, args.target_id)
     oprot.writeMessageBegin("friend_remove", TMessageType.REPLY, seqid)
     result.write(oprot)
     oprot.writeMessageEnd()
@@ -1040,12 +886,7 @@ class Processor(TProcessor):
     args.read(iprot)
     iprot.readMessageEnd()
     result = friendship_incoming_result()
-    d = defer.maybeDeferred(self._handler.friendship_incoming, args.user_id)
-    d.addCallback(self.write_results_success_friendship_incoming, result, seqid, oprot)
-    return d
-
-  def write_results_success_friendship_incoming(self, success, result, seqid, oprot):
-    result.success = success
+    result.success = self._handler.friendship_incoming(args.user_id)
     oprot.writeMessageBegin("friendship_incoming", TMessageType.REPLY, seqid)
     result.write(oprot)
     oprot.writeMessageEnd()
@@ -1056,12 +897,7 @@ class Processor(TProcessor):
     args.read(iprot)
     iprot.readMessageEnd()
     result = friendship_outgoing_result()
-    d = defer.maybeDeferred(self._handler.friendship_outgoing, args.user_id)
-    d.addCallback(self.write_results_success_friendship_outgoing, result, seqid, oprot)
-    return d
-
-  def write_results_success_friendship_outgoing(self, success, result, seqid, oprot):
-    result.success = success
+    result.success = self._handler.friendship_outgoing(args.user_id)
     oprot.writeMessageBegin("friendship_outgoing", TMessageType.REPLY, seqid)
     result.write(oprot)
     oprot.writeMessageEnd()
@@ -1072,21 +908,8 @@ class Processor(TProcessor):
     args.read(iprot)
     iprot.readMessageEnd()
     result = friendship_create_result()
-    d = defer.maybeDeferred(self._handler.friendship_create, args.actor_id, args.target_id)
-    d.addCallback(self.write_results_success_friendship_create, result, seqid, oprot)
-    d.addErrback(self.write_results_exception_friendship_create, result, seqid, oprot)
-    return d
-
-  def write_results_success_friendship_create(self, success, result, seqid, oprot):
-    result.success = success
-    oprot.writeMessageBegin("friendship_create", TMessageType.REPLY, seqid)
-    result.write(oprot)
-    oprot.writeMessageEnd()
-    oprot.trans.flush()
-
-  def write_results_exception_friendship_create(self, error, result, seqid, oprot):
     try:
-      error.raiseException()
+      result.success = self._handler.friendship_create(args.actor_id, args.target_id)
     except InputValidationError, validation_err:
       result.validation_err = validation_err
     except AlreadyExistsError, already_exists_err:
@@ -1101,21 +924,8 @@ class Processor(TProcessor):
     args.read(iprot)
     iprot.readMessageEnd()
     result = friendship_cancel_result()
-    d = defer.maybeDeferred(self._handler.friendship_cancel, args.actor_id, args.target_id)
-    d.addCallback(self.write_results_success_friendship_cancel, result, seqid, oprot)
-    d.addErrback(self.write_results_exception_friendship_cancel, result, seqid, oprot)
-    return d
-
-  def write_results_success_friendship_cancel(self, success, result, seqid, oprot):
-    result.success = success
-    oprot.writeMessageBegin("friendship_cancel", TMessageType.REPLY, seqid)
-    result.write(oprot)
-    oprot.writeMessageEnd()
-    oprot.trans.flush()
-
-  def write_results_exception_friendship_cancel(self, error, result, seqid, oprot):
     try:
-      error.raiseException()
+      result.success = self._handler.friendship_cancel(args.actor_id, args.target_id)
     except InvalidRequest, invalid_request:
       result.invalid_request = invalid_request
     except NotFoundError, not_found_error:
@@ -1130,21 +940,8 @@ class Processor(TProcessor):
     args.read(iprot)
     iprot.readMessageEnd()
     result = friendship_accept_result()
-    d = defer.maybeDeferred(self._handler.friendship_accept, args.actor_id, args.target_id)
-    d.addCallback(self.write_results_success_friendship_accept, result, seqid, oprot)
-    d.addErrback(self.write_results_exception_friendship_accept, result, seqid, oprot)
-    return d
-
-  def write_results_success_friendship_accept(self, success, result, seqid, oprot):
-    result.success = success
-    oprot.writeMessageBegin("friendship_accept", TMessageType.REPLY, seqid)
-    result.write(oprot)
-    oprot.writeMessageEnd()
-    oprot.trans.flush()
-
-  def write_results_exception_friendship_accept(self, error, result, seqid, oprot):
     try:
-      error.raiseException()
+      result.success = self._handler.friendship_accept(args.actor_id, args.target_id)
     except InputValidationError, validation_err:
       result.validation_err = validation_err
     except NotFoundError, not_found_error:
@@ -1159,21 +956,8 @@ class Processor(TProcessor):
     args.read(iprot)
     iprot.readMessageEnd()
     result = friendship_reject_result()
-    d = defer.maybeDeferred(self._handler.friendship_reject, args.actor_id, args.target_id)
-    d.addCallback(self.write_results_success_friendship_reject, result, seqid, oprot)
-    d.addErrback(self.write_results_exception_friendship_reject, result, seqid, oprot)
-    return d
-
-  def write_results_success_friendship_reject(self, success, result, seqid, oprot):
-    result.success = success
-    oprot.writeMessageBegin("friendship_reject", TMessageType.REPLY, seqid)
-    result.write(oprot)
-    oprot.writeMessageEnd()
-    oprot.trans.flush()
-
-  def write_results_exception_friendship_reject(self, error, result, seqid, oprot):
     try:
-      error.raiseException()
+      result.success = self._handler.friendship_reject(args.actor_id, args.target_id)
     except InputValidationError, validation_err:
       result.validation_err = validation_err
     except NotFoundError, not_found_error:
@@ -1188,29 +972,8 @@ class Processor(TProcessor):
     args.read(iprot)
     iprot.readMessageEnd()
     result = users_get_result()
-    d = defer.maybeDeferred(self._handler.users_get, args.user_id)
-    d.addCallback(self.write_results_success_users_get, result, seqid, oprot)
-    return d
-
-  def write_results_success_users_get(self, success, result, seqid, oprot):
-    result.success = success
+    result.success = self._handler.users_get(args.user_id)
     oprot.writeMessageBegin("users_get", TMessageType.REPLY, seqid)
-    result.write(oprot)
-    oprot.writeMessageEnd()
-    oprot.trans.flush()
-
-  def process_users_get_by_username(self, seqid, iprot, oprot):
-    args = users_get_by_username_args()
-    args.read(iprot)
-    iprot.readMessageEnd()
-    result = users_get_by_username_result()
-    d = defer.maybeDeferred(self._handler.users_get_by_username, args.username)
-    d.addCallback(self.write_results_success_users_get_by_username, result, seqid, oprot)
-    return d
-
-  def write_results_success_users_get_by_username(self, success, result, seqid, oprot):
-    result.success = success
-    oprot.writeMessageBegin("users_get_by_username", TMessageType.REPLY, seqid)
     result.write(oprot)
     oprot.writeMessageEnd()
     oprot.trans.flush()
@@ -1220,12 +983,7 @@ class Processor(TProcessor):
     args.read(iprot)
     iprot.readMessageEnd()
     result = timeline_list_result()
-    d = defer.maybeDeferred(self._handler.timeline_list, args.actor_id)
-    d.addCallback(self.write_results_success_timeline_list, result, seqid, oprot)
-    return d
-
-  def write_results_success_timeline_list(self, success, result, seqid, oprot):
-    result.success = success
+    result.success = self._handler.timeline_list(args.actor_id)
     oprot.writeMessageBegin("timeline_list", TMessageType.REPLY, seqid)
     result.write(oprot)
     oprot.writeMessageEnd()
@@ -1236,12 +994,7 @@ class Processor(TProcessor):
     args.read(iprot)
     iprot.readMessageEnd()
     result = system_reset_fixtures_result()
-    d = defer.maybeDeferred(self._handler.system_reset_fixtures, )
-    d.addCallback(self.write_results_success_system_reset_fixtures, result, seqid, oprot)
-    return d
-
-  def write_results_success_system_reset_fixtures(self, success, result, seqid, oprot):
-    result.success = success
+    result.success = self._handler.system_reset_fixtures()
     oprot.writeMessageBegin("system_reset_fixtures", TMessageType.REPLY, seqid)
     result.write(oprot)
     oprot.writeMessageEnd()
@@ -3449,126 +3202,6 @@ class users_get_result:
       oprot.trans.write(fastbinary.encode_binary(self, (self.__class__, self.thrift_spec)))
       return
     oprot.writeStructBegin('users_get_result')
-    if self.success is not None:
-      oprot.writeFieldBegin('success', TType.STRUCT, 0)
-      self.success.write(oprot)
-      oprot.writeFieldEnd()
-    oprot.writeFieldStop()
-    oprot.writeStructEnd()
-
-  def validate(self):
-    return
-
-
-  def __repr__(self):
-    L = ['%s=%r' % (key, value)
-      for key, value in self.__dict__.iteritems()]
-    return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
-
-  def __eq__(self, other):
-    return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
-
-  def __ne__(self, other):
-    return not (self == other)
-
-class users_get_by_username_args:
-  """
-  Attributes:
-   - username
-  """
-
-  thrift_spec = (
-    None, # 0
-    (1, TType.STRING, 'username', None, None, ), # 1
-  )
-
-  def __init__(self, username=None,):
-    self.username = username
-
-  def read(self, iprot):
-    if iprot.__class__ == TBinaryProtocol.TBinaryProtocolAccelerated and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None and fastbinary is not None:
-      fastbinary.decode_binary(self, iprot.trans, (self.__class__, self.thrift_spec))
-      return
-    iprot.readStructBegin()
-    while True:
-      (fname, ftype, fid) = iprot.readFieldBegin()
-      if ftype == TType.STOP:
-        break
-      if fid == 1:
-        if ftype == TType.STRING:
-          self.username = iprot.readString();
-        else:
-          iprot.skip(ftype)
-      else:
-        iprot.skip(ftype)
-      iprot.readFieldEnd()
-    iprot.readStructEnd()
-
-  def write(self, oprot):
-    if oprot.__class__ == TBinaryProtocol.TBinaryProtocolAccelerated and self.thrift_spec is not None and fastbinary is not None:
-      oprot.trans.write(fastbinary.encode_binary(self, (self.__class__, self.thrift_spec)))
-      return
-    oprot.writeStructBegin('users_get_by_username_args')
-    if self.username is not None:
-      oprot.writeFieldBegin('username', TType.STRING, 1)
-      oprot.writeString(self.username)
-      oprot.writeFieldEnd()
-    oprot.writeFieldStop()
-    oprot.writeStructEnd()
-
-  def validate(self):
-    return
-
-
-  def __repr__(self):
-    L = ['%s=%r' % (key, value)
-      for key, value in self.__dict__.iteritems()]
-    return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
-
-  def __eq__(self, other):
-    return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
-
-  def __ne__(self, other):
-    return not (self == other)
-
-class users_get_by_username_result:
-  """
-  Attributes:
-   - success
-  """
-
-  thrift_spec = (
-    (0, TType.STRUCT, 'success', (User, User.thrift_spec), None, ), # 0
-  )
-
-  def __init__(self, success=None,):
-    self.success = success
-
-  def read(self, iprot):
-    if iprot.__class__ == TBinaryProtocol.TBinaryProtocolAccelerated and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None and fastbinary is not None:
-      fastbinary.decode_binary(self, iprot.trans, (self.__class__, self.thrift_spec))
-      return
-    iprot.readStructBegin()
-    while True:
-      (fname, ftype, fid) = iprot.readFieldBegin()
-      if ftype == TType.STOP:
-        break
-      if fid == 0:
-        if ftype == TType.STRUCT:
-          self.success = User()
-          self.success.read(iprot)
-        else:
-          iprot.skip(ftype)
-      else:
-        iprot.skip(ftype)
-      iprot.readFieldEnd()
-    iprot.readStructEnd()
-
-  def write(self, oprot):
-    if oprot.__class__ == TBinaryProtocol.TBinaryProtocolAccelerated and self.thrift_spec is not None and fastbinary is not None:
-      oprot.trans.write(fastbinary.encode_binary(self, (self.__class__, self.thrift_spec)))
-      return
-    oprot.writeStructBegin('users_get_by_username_result')
     if self.success is not None:
       oprot.writeFieldBegin('success', TType.STRUCT, 0)
       self.success.write(oprot)
